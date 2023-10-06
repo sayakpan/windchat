@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "278841279550",
+    "project_id": "windchat-sayak",
+    "storage_bucket": "windchat-sayak.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278841279550:android:88acc0916158c325cafd6f",
+        "android_client_info": {
+          "package_name": "com.example.windchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "278841279550-ddfhn9obmpcqra8itqg02fr0ikm3b56r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.windchat",
+            "certificate_hash": "238d989dd50c9d374a9b0e6a2c0f38db91c231ad"
+          }
+        },
+        {
+          "client_id": "278841279550-mph5q3cj6j6j3mgbf1bmtiogne3ega04.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqCAm__9h0bxheHOS4nguVaLCWLBqAAh0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "278841279550-mph5q3cj6j6j3mgbf1bmtiogne3ega04.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "278841279550-a2hm9rlojnf92djphpltmv0pv0fbom0m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.windchat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

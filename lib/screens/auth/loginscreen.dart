@@ -1,0 +1,94 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:windchat/helper/dialogs.dart';
+import 'package:windchat/main.dart';
+import 'package:windchat/screens/homescreen.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  _handleGoogleButtonClick() {
+    // To show the Progress bar
+    Dialogs.showProgressBar(context);
+
+    _signInWithGoogle().then((user) {
+      // To Hide the progress bar
+      Navigator.pop(context);
+
+      if (user != null) {
+        log('User : ${user.user}');
+        log('Additional : ${user.additionalUserInfo}');
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()));
+      }
+    });
+  }
+
+// Federated identity & social sign-in
+
+  Future<UserCredential?> _signInWithGoogle() async {
+    try {
+      // If internet is Unavailable
+      await InternetAddress.lookup('google.com');
+
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      log('\nsignInWithGoogle : $e');
+      Dialogs.showSnackBar(context, 'No Internet, Please try later.');
+      return null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            top: mq.height * .25,
+            width: 400,
+            child: Image.asset("assets/images/welcome.png"),
+          ),
+          Positioned(
+              top: mq.height * .6,
+              width: mq.width * .6,
+              left: mq.width * .20,
+              height: mq.height * .06,
+              child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 2,
+                    backgroundColor: Colors.white,
+                    side: const BorderSide(color: Color(0xFF4B39EF)),
+                  ),
+                  onPressed: () {
+                    _handleGoogleButtonClick();
+                  },
+                  icon: Image.asset(
+                    "assets/images/google.png",
+                    height: mq.height * .04,
+                  ),
+                  label: const Text(
+                    "Login with Google",
+                    style: TextStyle(color: Color(0xFF4B39EF), fontSize: 16),
+                  )))
+        ],
+      ),
+    );
+  }
+}
