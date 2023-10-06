@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         body: ListView.builder(
-            itemCount: 5,
+            itemCount: 7,
             padding: EdgeInsets.only(top: mq.height * 0.02),
             physics: const BouncingScrollPhysics(),
             itemBuilder: ((context, index) {
