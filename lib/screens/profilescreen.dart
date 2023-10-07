@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -29,9 +30,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back), // Hamburger menu icon
           onPressed: () {
-            // Navigator.pop(context);
+            Navigator.pop(context);
           },
         ),
+      ),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          CircleAvatar(
+            radius: 25.0,
+            child: ClipOval(
+              child: Image.network(
+                FirebaseAuth.instance.currentUser!.photoURL.toString(),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
