@@ -31,13 +31,17 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  google_fonts: ^6.1.0
   # For Integrating Firebase
   firebase_core: ^2.17.0
   # For Google Sign In
   google_sign_in: ^6.1.5  
   #For Firebase Authentication
   firebase_auth: ^4.10.1
-  google_fonts: ^6.1.0
+  # For Firebase Cloud
+  cloud_firestore: ^4.9.3
+  # For loading images
+  cached_network_image: ^3.3.0
 
 dev_dependencies:
   flutter_test:
