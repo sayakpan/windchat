@@ -9,9 +9,27 @@ class API {
   // Used for Accessing Firebase Cloud
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  // Get the current user
+  // Get the current user from Firebase Auth
   static User get user {
     return auth.currentUser!;
+  }
+
+  // Get the current user from Firebase Database
+  static late ChatUser ownuser;
+
+  // ownuser will store the Own logged in user details fetched from firebase database
+  static Future<void> getOwnUser() async {
+    await firestore.collection("users").doc(user.uid).get().then((value) {
+      ownuser = ChatUser.fromJson(value.data()!);
+    });
+  }
+
+  // Get All Users from Firebase
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
+    return firestore
+        .collection("users")
+        .where('id', isNotEqualTo: user.uid)
+        .snapshots();
   }
 
   // Check existing User
@@ -29,7 +47,7 @@ class API {
     final chatuser = ChatUser(
         image: user.photoURL.toString(),
         name: user.displayName.toString(),
-        about: "Hi There !",
+        about: "Hi, it's me. 🥰",
         createdAt: time,
         lastActive: time,
         id: user.uid,
@@ -40,5 +58,13 @@ class API {
         .collection('users')
         .doc(user.uid)
         .set(chatuser.toJson());
+  }
+
+  // Update User Data
+  static Future<void> updateUser() async {
+    await firestore
+        .collection('users')
+        .doc(user.uid)
+        .update({"about": ownuser.about});
   }
 }

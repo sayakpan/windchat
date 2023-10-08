@@ -1,52 +1,198 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:windchat/api/api.dart';
+import 'package:windchat/helper/dialogs.dart';
+import 'package:windchat/main.dart';
+import 'package:windchat/models/chat_user.dart';
+import 'package:windchat/screens/auth/loginscreen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final ChatUser user;
+  const ProfileScreen({super.key, required this.user});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  // To be used in form
+  final _formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // toolbarHeight: mq.height * .09,
-        title: RichText(
-          text: const TextSpan(
+    return GestureDetector(
+      // To Hide the Keyboard when click in the background
+      onTap: () => FocusScope.of(context).unfocus(),
+
+      // Scaffold From here
+      child: Scaffold(
+        appBar: AppBar(
+          // toolbarHeight: mq.height * .09,
+          title: RichText(
+            text: const TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Profile',
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back), // Hamburger menu icon
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: Form(
+          key: _formkey,
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              TextSpan(
-                text: 'Profile',
-                style: TextStyle(
-                  fontSize: 25,
-                  color: Colors.black,
+              //Profile Picture and Edit Button
+              Positioned(
+                top: mq.height * .05,
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 95.0,
+                      backgroundImage: NetworkImage(widget.user.image),
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 225, 225, 225),
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: MaterialButton(
+                        onPressed: () {},
+                        shape: const CircleBorder(),
+                        color: Colors.white,
+                        child: const Icon(Icons.edit),
+                      ),
+                    )
+                  ],
                 ),
               ),
+
+              // Name
+              Positioned(
+                  top: mq.height * .3,
+                  child: Text(
+                    widget.user.name,
+                    style: const TextStyle(
+                      fontSize: 30,
+                    ),
+                  )),
+
+              // Email
+              Positioned(
+                  top: mq.height * .36,
+                  child: Text(
+                    widget.user.email,
+                    style: const TextStyle(
+                      fontSize: 20,
+                    ),
+                  )),
+
+              //About Textform
+              Positioned(
+                top: mq.height * .43,
+                height: mq.height * .15,
+                width: mq.width * .7,
+                child: TextFormField(
+                  initialValue: widget.user.about,
+                  onSaved: (newValue) => API.ownuser.about = newValue!,
+                  validator: (value) => value != null && value.isNotEmpty
+                      ? null
+                      : 'Write a cool about',
+                  decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.info,
+                          color: Theme.of(context).primaryColor),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      hintText: 'eg. Hi, There !',
+                      label: const Text(
+                        'About',
+                        style: TextStyle(fontSize: 22),
+                      )),
+                ),
+              ),
+
+              // Update Button
+              Positioned(
+                  top: mq.height * .53,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
+                        minimumSize: Size(
+                          mq.width * .3,
+                          mq.height * .05,
+                        )),
+                    onPressed: () {
+                      if (_formkey.currentState!.validate()) {
+                        log("Input Validated");
+                        _formkey.currentState!.save();
+                        API.updateUser().then((value) {
+                          Dialogs.showSnackBar(
+                              context, "Profile Updated", Colors.green);
+                        });
+                        log("User Data Updated");
+                      }
+                    },
+                    icon: const Icon(Icons.edit),
+                    label: const Text(
+                      "Update",
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  ))
             ],
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back), // Hamburger menu icon
-          onPressed: () {
-            Navigator.pop(context);
+
+        //Logout Button
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () async {
+            Dialogs.showProgressBar(context);
+            await FirebaseAuth.instance.signOut().then((value) async {
+              await GoogleSignIn().signOut().then((value) {
+                // To pop the dialog
+                Navigator.pop(context);
+                // To pop the homepage
+                Navigator.pop(context);
+                // To go to the Login page
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()));
+                log('Successfully Signed Out');
+              });
+            });
           },
-        ),
-      ),
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          CircleAvatar(
-            radius: 25.0,
-            child: ClipOval(
-              child: Image.network(
-                FirebaseAuth.instance.currentUser!.photoURL.toString(),
-                fit: BoxFit.cover,
-              ),
-            ),
+          icon: const Icon(Icons.exit_to_app_rounded),
+          label: const Text(
+            "Logout",
+            style: TextStyle(fontSize: 17),
           ),
-        ],
+          backgroundColor: Colors.redAccent,
+          foregroundColor: Colors.white,
+        ),
       ),
     );
   }

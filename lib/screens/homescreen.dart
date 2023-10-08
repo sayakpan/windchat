@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:windchat/api/api.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/screens/profilescreen.dart';
-import 'package:windchat/screens/splashscreen.dart';
 import 'package:windchat/widgets/chat_user_card.dart';
 import '../models/chat_user.dart';
 
@@ -16,16 +13,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Signout Function
-  signout(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    await GoogleSignIn().signOut();
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const SplashScreen()));
-  }
-
   List<ChatUser> userlist = [];
+
+  @override
+  void initState() {
+    super.initState();
+    API.getOwnUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,19 +60,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ProfileScreen()));
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.exit_to_app_rounded), // SIGN OUT
-              onPressed: () {
-                signout(context);
+                        builder: (context) =>
+                            ProfileScreen(user: API.ownuser)));
               },
             ),
           ],
         ),
         body: StreamBuilder(
-            stream: API.firestore.collection("users").snapshots(),
+            stream: API.getAllUsers(),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:

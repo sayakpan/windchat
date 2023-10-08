@@ -20,11 +20,12 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 2), () {
       if (FirebaseAuth.instance.currentUser != null) {
         // Check if the user is logged in
-        log('User : ${FirebaseAuth.instance.currentUser}');
+        log('User Already Logged In : ${FirebaseAuth.instance.currentUser!.email}');
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const HomeScreen()));
       } else {
         // if not logged in then go to LOGIN SCREEN
+        log('Not Logged In : Moving to Login Screen');
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const LoginScreen()));
       }
