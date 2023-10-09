@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:windchat/models/chat_user.dart';
+import 'package:windchat/models/messages.dart';
 
 class API {
   // Used for firebase authentication
@@ -66,5 +67,47 @@ class API {
         .collection('users')
         .doc(user.uid)
         .update({"about": ownuser.about});
+  }
+
+// ************************ ChatBox API ************************
+
+// Function to create unique conversation id between sender and receiver
+  static String getConversationID(String id) {
+    String smallerID = user.uid;
+    String biggerID = id;
+
+    if (user.uid.hashCode > id.hashCode) {
+      smallerID = id;
+      biggerID = user.uid;
+    }
+
+    return "${smallerID}_$biggerID";
+  }
+
+// Function to get all messages of a specific conversation
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
+      ChatUser chatuser) {
+    return firestore
+        .collection('chats/${getConversationID(chatuser.id)}/messages')
+        .snapshots();
+  }
+
+// Function to Send a message
+  static Future<void> sendMessage(ChatUser sendtoUser, String msg) async {
+    // Taking sending time as message document id in firebase
+    final time = DateTime.now().millisecondsSinceEpoch.toString();
+
+    final message = Messages(
+        msg: msg,
+        toID: sendtoUser.id,
+        read: '',
+        type: 'text',
+        sent: time,
+        fromID: user.uid);
+
+    final reference = firestore
+        .collection('chats/${getConversationID(sendtoUser.id)}/messages');
+
+    await reference.doc(time).set(message.toJson());
   }
 }

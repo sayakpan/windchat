@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
+import 'package:windchat/screens/chatscreen.dart';
 
 class ChatUserCard extends StatefulWidget {
   final ChatUser user;
@@ -18,7 +19,14 @@ class _ChatUserCardState extends State<ChatUserCard> {
       margin: EdgeInsets.symmetric(horizontal: mq.width * .05, vertical: 5),
       elevation: 2,
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                        user: widget.user,
+                      )));
+        },
         child: ListTile(
           // Profile image
           leading: CircleAvatar(
@@ -30,16 +38,6 @@ class _ChatUserCardState extends State<ChatUserCard> {
               ),
             ),
           ),
-
-          // leading: ClipRRect(
-          //     borderRadius: BorderRadius.circular(mq.height * .03),
-          //     child: CachedNetworkImage(
-          //       width: mq.height * .055,
-          //       height: mq.height * .055,
-          //       imageUrl: widget.user.image,
-          //       errorWidget: (context, url, error) =>
-          //           const CircleAvatar(child: Icon(CupertinoIcons.person)),
-          //     )),
 
           // User Name
           title: Text(widget.user.name),
