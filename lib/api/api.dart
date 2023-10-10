@@ -110,4 +110,22 @@ class API {
 
     await reference.doc(time).set(message.toJson());
   }
+
+// Mark messages as Read when viewed - Set Read Value with Time
+  static Future<void> setMessageReadStatus(Messages message) async {
+    firestore
+        .collection('chats/${getConversationID(message.fromID)}/messages')
+        .doc(message.sent)
+        .update({"read": DateTime.now().millisecondsSinceEpoch.toString()});
+  }
+
+  // Get the last message
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessages(
+      ChatUser chatuser) {
+    return firestore
+        .collection('chats/${getConversationID(chatuser.id)}/messages')
+        .orderBy("sent", descending: true)
+        .limit(1)
+        .snapshots();
+  }
 }

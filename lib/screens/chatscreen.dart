@@ -96,14 +96,17 @@ class _ChatScreenState extends State<ChatScreen> {
                   final msglist = data!
                       .map((element) => Messages.fromJson(element.data()))
                       .toList();
+                  // to show latest at the bottom everytime a new message is received
+                  final reversedMessages = msglist.reversed.toList();
 
                   if (msglist.isNotEmpty) {
                     return ListView.builder(
-                        itemCount: msglist.length,
+                        reverse: true,
+                        itemCount: reversedMessages.length,
                         padding: EdgeInsets.only(top: mq.height * 0.02),
                         physics: const BouncingScrollPhysics(),
                         itemBuilder: ((context, index) {
-                          return MessageCard(message: msglist[index]);
+                          return MessageCard(message: reversedMessages[index]);
                         }));
                   } else {
                     return const Center(
