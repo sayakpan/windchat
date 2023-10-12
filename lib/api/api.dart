@@ -72,17 +72,9 @@ class API {
 // ************************ ChatBox API ************************
 
 // Function to create unique conversation id between sender and receiver
-  static String getConversationID(String id) {
-    String smallerID = user.uid;
-    String biggerID = id;
-
-    if (user.uid.hashCode > id.hashCode) {
-      smallerID = id;
-      biggerID = user.uid;
-    }
-
-    return "${smallerID}_$biggerID";
-  }
+  static String getConversationID(String id) => user.uid.hashCode <= id.hashCode
+      ? '${user.uid}_$id'
+      : '${id}_${user.uid}';
 
 // Function to get all messages of a specific conversation
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(

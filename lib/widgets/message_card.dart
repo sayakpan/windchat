@@ -40,9 +40,10 @@ class _MessageCardState extends State<MessageCard> {
                   ),
                   padding: EdgeInsets.all(mq.width * .03),
                   decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 156, 238, 159),
+                      color: Theme.of(context).primaryColor,
                       border: Border.all(
-                          color: const Color.fromARGB(255, 81, 201, 87)),
+                          // color: const Color.fromARGB(255, 81, 201, 87)),
+                          color: const Color.fromARGB(255, 49, 66, 166)),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
@@ -51,7 +52,7 @@ class _MessageCardState extends State<MessageCard> {
                       )),
                   child: Text(
                     widget.message.msg,
-                    style: const TextStyle(fontSize: 17),
+                    style: const TextStyle(fontSize: 17, color: Colors.white),
                   )),
             ),
           ],
@@ -123,8 +124,11 @@ class _MessageCardState extends State<MessageCard> {
                   ),
                   padding: EdgeInsets.all(mq.width * .03),
                   decoration: BoxDecoration(
-                      color: Colors.blue.shade100,
-                      border: Border.all(color: Colors.blue.shade300),
+                      // color: Colors.blue.shade100,
+                      // border: Border.all(color: Colors.blue.shade300),
+                      color: const Color.fromARGB(255, 223, 223, 223),
+                      border: Border.all(
+                          color: const Color.fromARGB(255, 179, 178, 178)),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(5),
                         topRight: Radius.circular(30),
@@ -133,7 +137,7 @@ class _MessageCardState extends State<MessageCard> {
                       )),
                   child: Text(
                     widget.message.msg,
-                    style: const TextStyle(fontSize: 17),
+                    style: const TextStyle(fontSize: 17, color: Colors.black),
                   )),
             ),
           ],
