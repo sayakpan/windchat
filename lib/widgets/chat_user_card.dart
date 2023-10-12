@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:windchat/helper/mydateutility.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/models/messages.dart';
@@ -46,66 +47,81 @@ class _ChatUserCardState extends State<ChatUserCard> {
               }
 
               return ListTile(
-                // Profile image
-                leading: CircleAvatar(
-                  radius: 25.0,
-                  child: ClipOval(
-                    child: Image.network(
-                      widget.user.image,
-                      fit: BoxFit.cover,
+                  // Profile image
+                  leading: CircleAvatar(
+                    radius: 25.0,
+                    child: ClipOval(
+                      child: Image.network(
+                        widget.user.image,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
 
-                // User Name
-                title: Text(widget.user.name),
+                  // User Name
+                  title: Text(widget.user.name),
 
-                // About
-                subtitle: Row(
-                  children: [
-                    if (_message == null)
-                      Text(
-                        widget.user.about,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    else
-                      Row(
-                        children: [
-                          if (_message!.read.isEmpty &&
-                              _message!.fromID == API.user.uid)
-                            const Icon(
-                              Icons.done,
-                              color: Colors.grey,
-                            )
-                          else if (_message!.read.isNotEmpty &&
-                              _message!.fromID == API.user.uid)
-                            const Icon(
-                              Icons.done_all_sharp,
-                              color: Colors.blue,
+                  // About
+                  subtitle: Row(
+                    children: [
+                      if (_message == null)
+                        Text(
+                          widget.user.about,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      else
+                        Row(
+                          children: [
+                            if (_message!.read.isEmpty &&
+                                _message!.fromID == API.user.uid)
+                              const Icon(
+                                Icons.done,
+                                color: Colors.grey,
+                              )
+                            else if (_message!.read.isNotEmpty &&
+                                _message!.fromID == API.user.uid)
+                              const Icon(
+                                Icons.done_all_sharp,
+                                color: Colors.blue,
+                              ),
+                            Text(
+                              _message!.msg.length > 20
+                                  ? '${_message!.msg.substring(0, 20)}...'
+                                  : _message!.msg,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          Text(
-                            _message!.msg,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      )
-                  ],
-                ),
+                          ],
+                        )
+                    ],
+                  ),
 
-                // Last Active
-                // trailing: Text(widget.user.lastActive),
+                  // Last Active
+                  // trailing: Text(widget.user.lastActive),
 
-                // Last Active
-                trailing: Container(
-                  width: 15,
-                  height: 15,
-                  decoration: BoxDecoration(
-                      color: Colors.greenAccent.shade400,
-                      borderRadius: BorderRadius.circular(9)),
-                ),
-              );
+                  trailing:
+                      // When No message is sent
+                      _message == null
+                          ? null
+
+                          // For Unread Message
+                          : _message!.read.isEmpty &&
+                                  _message!.fromID != API.user.uid
+                              ? Container(
+                                  width: 15,
+                                  height: 15,
+                                  decoration: BoxDecoration(
+                                      color: Colors.greenAccent.shade400,
+                                      borderRadius: BorderRadius.circular(9)),
+                                )
+
+                              //For sent messages
+                              : Text(
+                                  MyDateUtility.getFormattedTime(
+                                      context: context, time: _message!.sent),
+                                  style: const TextStyle(fontSize: 14),
+                                ));
             }),
       ),
     );
