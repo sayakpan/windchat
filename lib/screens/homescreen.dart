@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           leading: IconButton(
             icon: const Icon(Icons.menu), // Hamburger menu icon
             onPressed: () {
-              // Add the action you want to perform when the icon is pressed
+              // Add the action you want to perform when the icon is clicked
             },
           ),
           actions: [
