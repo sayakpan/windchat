@@ -80,7 +80,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       right: 0,
                       bottom: 0,
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showModalBottom();
+                        },
                         shape: const CircleBorder(),
                         color: Colors.white,
                         child: const Icon(Icons.edit),
@@ -195,5 +197,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+  _showModalBottom() {
+    showModalBottomSheet(
+        context: context,
+        builder: ((context) {
+          return SizedBox(
+            height: mq.height * .3,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 25, bottom: 20),
+                  child: Text(
+                    "Upload Profile Image",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //From Gallery Upload Image button
+                    ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                            elevation: 3,
+                            fixedSize: Size(mq.width * .3, mq.height * .15)),
+                        child: Image.asset(
+                          "assets/images/image-gallery.png",
+                        )),
+
+                    SizedBox(
+                      width: mq.width * .12,
+                    ),
+
+                    //From Camera Upload Image button
+                    ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                            elevation: 3,
+                            fixedSize: Size(mq.width * .3, mq.height * .15)),
+                        child: Image.asset(
+                          "assets/images/camera.png",
+                        ))
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
   }
 }
