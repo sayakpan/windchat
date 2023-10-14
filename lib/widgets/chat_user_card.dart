@@ -6,6 +6,7 @@ import 'package:windchat/models/messages.dart';
 import 'package:windchat/screens/chatscreen.dart';
 
 import '../api/api.dart';
+import '../helper/unread_counter.dart';
 
 class ChatUserCard extends StatefulWidget {
   final ChatUser user;
@@ -19,6 +20,8 @@ class ChatUserCard extends StatefulWidget {
 class _ChatUserCardState extends State<ChatUserCard> {
   // To Store the last message - can be null
   Messages? _message;
+
+  // get all messages
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +57,8 @@ class _ChatUserCardState extends State<ChatUserCard> {
                       child: Image.network(
                         widget.user.image,
                         fit: BoxFit.cover,
+                        width: 100,
+                        height: 100,
                       ),
                     ),
                   ),
@@ -96,10 +101,6 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         )
                     ],
                   ),
-
-                  // Last Active
-                  // trailing: Text(widget.user.lastActive),
-
                   trailing:
                       // When No message is sent
                       _message == null
@@ -109,11 +110,20 @@ class _ChatUserCardState extends State<ChatUserCard> {
                           : _message!.read.isEmpty &&
                                   _message!.fromID != API.user.uid
                               ? Container(
-                                  width: 15,
-                                  height: 15,
+                                  width: 20,
+                                  height: 20,
                                   decoration: BoxDecoration(
                                       color: Colors.greenAccent.shade400,
-                                      borderRadius: BorderRadius.circular(9)),
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Center(
+                                      child: UnreadCounter(
+                                    user: widget.user,
+                                    numberstyle: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )),
                                 )
 
                               //For sent messages

@@ -3,6 +3,7 @@ import 'package:windchat/api/api.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/screens/profilescreen.dart';
 import 'package:windchat/widgets/chat_user_card.dart';
+import 'package:windchat/widgets/drawar_side.dart';
 import '../models/chat_user.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,7 +19,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    API.getOwnUser();
+    _initialiseOwnUser();
+  }
+
+  Future<void> _initialiseOwnUser() async {
+    await API.getOwnUser();
   }
 
   @override
@@ -47,12 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          leading: IconButton(
-            icon: const Icon(Icons.menu), // Hamburger menu icon
-            onPressed: () {
-              // Add the action you want to perform when the icon is clicked
-            },
-          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.person), // Profile Button
@@ -65,6 +64,19 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ],
+        ),
+        // drawer: SideDrawer(user: API.ownuser),
+        drawer: FutureBuilder(
+          future: API.getOwnUser(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator(); // Loading indicator while waiting
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return SideDrawer(user: API.ownuser);
+            }
+          },
         ),
         body: StreamBuilder(
             stream: API.getAllUsers(),
