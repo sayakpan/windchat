@@ -1,5 +1,10 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/models/messages.dart';
 
@@ -9,6 +14,9 @@ class API {
 
   // Used for Accessing Firebase Cloud
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  // Used for Accessing Firebase Storage
+  static FirebaseStorage storage = FirebaseStorage.instance;
 
   // Get the current user from Firebase Auth
   static User get user {
@@ -119,5 +127,40 @@ class API {
         .orderBy("sent", descending: true)
         .limit(1)
         .snapshots();
+  }
+
+  //************************* Additional Feature *************************
+
+  // Update Profile Image
+  static Future<void> updateProfileImage(File imagefile) async {
+    // Get the extension of image
+    final extension = imagefile.path.split('.').last;
+    // set the user id as image name
+    final reference =
+        storage.ref().child('profileimages/${user.uid}.$extension');
+
+// Image Size before compression
+    log('Image Size : ${imagefile.lengthSync() / 1000} kb');
+
+    // Compress the image in a temporary directory
+    var tempDir = await getTemporaryDirectory();
+    var targetPath = "${tempDir.path}/${user.uid}.$extension";
+
+    var result = await FlutterImageCompress.compressAndGetFile(
+      imagefile.absolute.path,
+      targetPath,
+      quality: 60,
+    );
+
+    await reference.putFile(File(result!.path)).then((p0) =>
+        {log('Compressed Image Size : ${p0.bytesTransferred / 1000} kb')});
+
+    ownuser.image = await reference.getDownloadURL();
+    log('${ownuser.name} - Profile Image Updated\nImage URL : ${ownuser.image}');
+
+    await firestore
+        .collection('users')
+        .doc(user.uid)
+        .update({'image': ownuser.image});
   }
 }

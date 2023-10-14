@@ -12,10 +12,25 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController animationController;
+
   @override
   void initState() {
     super.initState();
+
+    // for logo animation
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    );
+    // Start the rotation animation
+    animationController.repeat();
+    // Stop the rotation after 3 seconds
+    Future.delayed(const Duration(seconds: 1), () {
+      animationController.stop();
+    });
 
     // Handle Login
     Future.delayed(const Duration(seconds: 2), () {
@@ -35,33 +50,44 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Mediaquery - Get the screen size of the device
     mq = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Stack(
         alignment: Alignment.center,
         children: [
           Positioned(
               top: mq.height * .25,
-              child: Image.asset(
-                "assets/images/logo.png",
-                width: 200,
+              child: AnimatedBuilder(
+                animation: animationController,
+                builder: (BuildContext context, Widget? child) {
+                  return Transform.rotate(
+                    angle: animationController.value * 100,
+                    child: Image.asset(
+                      "assets/images/logo.png",
+                      width: 170,
+                    ),
+                  );
+                },
               )),
           Positioned(
-              top: mq.height * .5,
+              top: mq.height * .50,
               child: RichText(
                 text: TextSpan(
                   children: [
                     const TextSpan(
                       text: 'Wind',
                       style: TextStyle(
-                        fontSize: 50,
+                        fontSize: 25,
                         color: Colors.black,
                       ),
                     ),
                     TextSpan(
                       text: 'Chat',
                       style: TextStyle(
-                        fontSize: 50,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
                         color: Theme.of(context)
                             .primaryColor, // Use the desired color
                       ),
