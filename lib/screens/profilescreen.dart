@@ -1,8 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:windchat/api/api.dart';
 import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
@@ -204,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context: context,
         builder: ((context) {
           return SizedBox(
-            height: mq.height * .3,
+            height: mq.height * .35,
             child: Column(
               children: [
                 const Padding(
@@ -219,10 +221,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     //From Gallery Upload Image button
                     ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          // Pick an image.
+                          final ImagePicker picker = ImagePicker();
+                          final XFile? galleryphoto = await picker.pickImage(
+                              source: ImageSource.gallery);
+                          log('${galleryphoto?.path}');
+                          API
+                              .updateProfileImage(File(galleryphoto!.path))
+                              .then((value) => {
+                                    setState(() {
+                                      // This will trigger a rebuild of the widget tree
+                                    })
+                                  });
+                          // ignore: use_build_context_synchronously
+                          Navigator.pop(context);
+                        },
                         style: ElevatedButton.styleFrom(
                             elevation: 3,
-                            fixedSize: Size(mq.width * .3, mq.height * .15)),
+                            fixedSize: Size(mq.width * .3, mq.height * .135)),
                         child: Image.asset(
                           "assets/images/image-gallery.png",
                         )),
@@ -233,14 +250,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     //From Camera Upload Image button
                     ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          // Capture a photo.
+                          final ImagePicker picker = ImagePicker();
+                          final XFile? cameraphoto = await picker.pickImage(
+                              source: ImageSource.camera);
+                          log('${cameraphoto?.path}');
+                          API
+                              .updateProfileImage(File(cameraphoto!.path))
+                              .then((value) => {
+                                    setState(() {
+                                      // This will trigger a rebuild of the widget tree
+                                    })
+                                  });
+
+                          // ignore: use_build_context_synchronously
+                          Navigator.pop(context);
+                        },
                         style: ElevatedButton.styleFrom(
                             elevation: 3,
-                            fixedSize: Size(mq.width * .3, mq.height * .15)),
+                            fixedSize: Size(mq.width * .3, mq.height * .135)),
                         child: Image.asset(
                           "assets/images/camera.png",
-                        ))
+                        )),
                   ],
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(
+                    top: 35,
+                  ),
+                  child: Text(
+                    "Don't worry, this will not change your gmail profile image.",
+                    style: TextStyle(fontSize: 13),
+                  ),
                 ),
               ],
             ),
