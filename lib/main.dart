@@ -63,4 +63,8 @@ Future<void> _initializeNotificationChannel() async {
     badge: true,
   );
   log(result!);
+  final channesl = await FcmChannelsManager().getChannels();
+  for (var element in channesl) {
+    log(element.id);
+  }
 }

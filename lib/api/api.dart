@@ -171,9 +171,13 @@ class API {
           "AAAAQOw8RD4:APA91bGGiZP9iQ6Vjt6092i0tTllJh3Z39Ny-kQV2Qbf6bheN3dZdTZJRm5lZ9bHScqcxs8qttbl2njmcCoL527AInpKlZlnd2jMFzE8LjrL-621ggOyu0beoRkbd22Ah1fIyaD3rv6p";
       final body = {
         "to": toUser.pushToken,
-        "notification": {"title": ownuser.name, "body": msg},
-        "android_channel_id": "chats",
+        "notification": {
+          "title": ownuser.name,
+          "body": msg,
+          "android_channel_id": "chats"
+        },
       };
+
       log(jsonEncode(body));
 
       var response = await post(
