@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,6 @@ class _ChatScreenState extends State<ChatScreen> {
           }
         },
         child: Scaffold(
-            backgroundColor: Colors.blue.shade50,
             appBar: AppBar(
               title: InkWell(
                 child: Row(
@@ -49,6 +49,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         child: Image.network(
                           widget.user.image,
                           fit: BoxFit.cover,
+                          width: 100,
+                          height: 100,
                         ),
                       ),
                     ),
@@ -85,21 +87,35 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
-            body: Column(
-              children: [
-                _chatContent(),
-                _chatSendBox(),
-                if (_showEmoji)
-                  SizedBox(
-                    height: mq.height * .35,
-                    child: EmojiPicker(
-                        textEditingController: _textController,
-                        config: Config(
-                          columns: 8,
-                          emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : .8),
-                        )),
-                  )
-              ],
+            body: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 168, 241, 246),
+                    Color.fromARGB(255, 244, 246, 206),
+                  ], // Define your gradient colors
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Column(
+                children: [
+                  _chatContent(),
+                  _chatSendBox(),
+                  if (_showEmoji)
+                    SizedBox(
+                      height: mq.height * .35,
+                      child: EmojiPicker(
+                          textEditingController: _textController,
+                          config: Config(
+                            columns: 8,
+                            emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : .8),
+                          )),
+                    )
+                ],
+              ),
             )),
       ),
     );
@@ -153,7 +169,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: Card(
-              elevation: 2,
+              elevation: 5,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               child: Row(children: [
@@ -197,6 +213,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     final ImagePicker picker = ImagePicker();
                     final List<XFile> galleryimages =
                         await picker.pickMultiImage();
+                    log(galleryimages.first.path);
                   },
                   icon: Icon(
                     Icons.image,
@@ -214,6 +231,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       final ImagePicker picker = ImagePicker();
                       final XFile? cameraphoto =
                           await picker.pickImage(source: ImageSource.camera);
+                      log('${cameraphoto?.path}');
                     },
                     icon: Icon(
                       Icons.camera_alt_rounded,
@@ -239,6 +257,7 @@ class _ChatScreenState extends State<ChatScreen> {
             padding:
                 const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 8),
             color: Colors.green,
+            elevation: 5,
             child: const Icon(
               Icons.send,
               color: Colors.white,

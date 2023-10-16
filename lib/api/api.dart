@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,6 +33,7 @@ class API {
   static Future<void> getOwnUser() async {
     await firestore.collection("users").doc(user.uid).get().then((value) {
       ownuser = ChatUser.fromJson(value.data()!);
+      getPushToken();
     });
   }
 
@@ -108,7 +112,10 @@ class API {
     final reference = firestore
         .collection('chats/${getConversationID(sendtoUser.id)}/messages');
 
-    await reference.doc(time).set(message.toJson());
+    await reference
+        .doc(time)
+        .set(message.toJson())
+        .then((value) => {sendPushNotification(sendtoUser, msg)});
   }
 
 // Mark messages as Read when viewed - Set Read Value with Time
@@ -129,9 +136,68 @@ class API {
         .snapshots();
   }
 
-  //************************* Additional Feature *************************
+  //***********************************************************************
+  //*************************                     *************************
+  //*************************  Push Notification  *************************
+  //*************************                     *************************
+  //***********************************************************************
+
+  static FirebaseMessaging firemsg = FirebaseMessaging.instance;
+
+  static Future<void> getPushToken() async {
+    await firemsg.requestPermission();
+
+    firemsg.getToken().then((token) async {
+      if (token != null) {
+        ownuser.pushToken = token;
+        await firestore
+            .collection('users')
+            .doc(user.uid)
+            .update({"push_token": ownuser.pushToken});
+        log(ownuser.pushToken);
+      }
+    });
+  }
+
+  static Future<void> sendPushNotification(ChatUser toUser, String msg) async {
+    try {
+      // Truncate msg if msg is too long
+      if (msg.length > 100) {
+        msg = msg.substring(0, 100);
+        msg += '...';
+      }
+
+      var serverkey =
+          "AAAAQOw8RD4:APA91bGGiZP9iQ6Vjt6092i0tTllJh3Z39Ny-kQV2Qbf6bheN3dZdTZJRm5lZ9bHScqcxs8qttbl2njmcCoL527AInpKlZlnd2jMFzE8LjrL-621ggOyu0beoRkbd22Ah1fIyaD3rv6p";
+      final body = {
+        "to": toUser.pushToken,
+        "notification": {"title": ownuser.name, "body": msg},
+        "android_channel_id": "chats",
+      };
+      log(jsonEncode(body));
+
+      var response = await post(
+          Uri.parse('https://fcm.googleapis.com/fcm/send'),
+          body: jsonEncode(body),
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "key=$serverkey"
+          });
+      log('Response status: ${response.statusCode}');
+      log('Response body: ${response.body}');
+    } catch (e) {
+      log('\nERROR : sendPushNotification - $e');
+    }
+  }
+
+  //***********************************************************************
+  //*************************                     *************************
+  //************************* Additional Features *************************
+  //*************************                     *************************
+  //***********************************************************************
 
   // Update Profile Image
+
   static Future<void> updateProfileImage(File imagefile) async {
     // Get the extension of image
     final extension = imagefile.path.split('.').last;
@@ -139,7 +205,7 @@ class API {
     final reference =
         storage.ref().child('profileimages/${user.uid}.$extension');
 
-// Image Size before compression
+    // Image Size before compression
     log('Image Size : ${imagefile.lengthSync() / 1000} kb');
 
     // Compress the image in a temporary directory
@@ -151,10 +217,8 @@ class API {
       targetPath,
       quality: 60,
     );
-
     await reference.putFile(File(result!.path)).then((p0) =>
         {log('Compressed Image Size : ${p0.bytesTransferred / 1000} kb')});
-
     ownuser.image = await reference.getDownloadURL();
     log('${ownuser.name} - Profile Image Updated\nImage URL : ${ownuser.image}');
 

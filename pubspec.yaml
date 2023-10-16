@@ -33,6 +33,17 @@ dependencies:
   emoji_picker_flutter: ^1.6.1
   # compress the image to make loading faster
   flutter_image_compress: ^2.0.4
+  # For Push Notifications
+  firebase_messaging: ^14.6.9
+  # For creating notification channel
+  flutter_notification_channel: ^2.0.0
+  fcm_channels_manager: ^0.0.7
+  # For working with APIs
+  http: ^1.1.0
+  # Text Animations
+  animated_text_kit: ^4.2.2
+
+  firebase_analytics: ^10.5.1
   path_provider: ^2.1.1
 
 dev_dependencies:

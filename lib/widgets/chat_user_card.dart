@@ -91,8 +91,8 @@ class _ChatUserCardState extends State<ChatUserCard> {
                                 color: Colors.blue,
                               ),
                             Text(
-                              _message!.msg.length > 20
-                                  ? '${_message!.msg.substring(0, 20)}...'
+                              _message!.msg.length > 17
+                                  ? '${_message!.msg.substring(0, 17)}...'
                                   : _message!.msg,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,

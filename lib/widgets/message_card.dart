@@ -39,12 +39,21 @@ class _MessageCardState extends State<MessageCard> {
                     bottom: mq.height * .01,
                   ),
                   padding: EdgeInsets.all(mq.width * .03),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      border: Border.all(
-                          // color: const Color.fromARGB(255, 81, 201, 87)),
-                          color: const Color.fromARGB(255, 49, 66, 166)),
-                      borderRadius: const BorderRadius.only(
+                  decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color.fromARGB(255, 122, 110, 234),
+                          Color.fromARGB(255, 69, 54, 207),
+                        ], // Define your gradient colors
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+
+                      // color: Theme.of(context).primaryColor,
+                      // border: Border.all(
+                      //     // color: const Color.fromARGB(255, 81, 201, 87)),
+                      //     color: const Color.fromARGB(255, 49, 66, 166)),
+                      borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
                         bottomLeft: Radius.circular(30),
@@ -124,11 +133,20 @@ class _MessageCardState extends State<MessageCard> {
                   ),
                   padding: EdgeInsets.all(mq.width * .03),
                   decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color.fromARGB(255, 255, 255, 255),
+                          Color.fromARGB(255, 235, 235, 235),
+                          Color.fromARGB(255, 208, 208, 208)
+                        ], // Define your gradient colors
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
                       // color: Colors.blue.shade100,
                       // border: Border.all(color: Colors.blue.shade300),
-                      color: const Color.fromARGB(255, 223, 223, 223),
+                      // color: const Color.fromARGB(255, 234, 234, 234),
                       border: Border.all(
-                          color: const Color.fromARGB(255, 179, 178, 178)),
+                          color: const Color.fromARGB(255, 207, 207, 207)),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(5),
                         topRight: Radius.circular(30),

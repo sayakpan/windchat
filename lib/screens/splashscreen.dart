@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:windchat/main.dart';
@@ -33,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen>
     });
 
     // Handle Login
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 3), () {
       if (FirebaseAuth.instance.currentUser != null) {
         // Check if the user is logged in
         log('User Already Logged In : ${FirebaseAuth.instance.currentUser!.email}');
@@ -58,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
         alignment: Alignment.center,
         children: [
           Positioned(
-              top: mq.height * .25,
+              top: mq.height * .35,
               child: AnimatedBuilder(
                 animation: animationController,
                 builder: (BuildContext context, Widget? child) {
@@ -72,35 +73,83 @@ class _SplashScreenState extends State<SplashScreen>
                 },
               )),
           Positioned(
-              top: mq.height * .50,
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    const TextSpan(
-                      text: 'Wind',
-                      style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'Chat',
-                      style: TextStyle(
-                        fontSize: 25,
+            top: mq.height * .87,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Wind',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    color: Colors.black,
+                  ),
+                ),
+                AnimatedTextKit(
+                  animatedTexts: [
+                    ColorizeAnimatedText(
+                      'Chat',
+                      textStyle: const TextStyle(
+                        fontSize: 30.0,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context)
-                            .primaryColor, // Use the desired color
                       ),
+                      colors: [
+                        Colors.purple,
+                        Colors.blue,
+                        Colors.yellow,
+                        Colors.red,
+                        Colors.white,
+                      ],
+                      speed: const Duration(milliseconds: 300),
                     ),
                   ],
+                  totalRepeatCount: 2,
                 ),
-              )),
+              ],
+            ),
+            // RichText(
+            //   text: TextSpan(
+            //     children: [
+            //       const TextSpan(
+            //         text: 'Wind',
+            //         style: TextStyle(
+            //           fontSize: 25,
+            //           color: Colors.black,
+            //         ),
+            //       ),
+            //       TextSpan(
+            //         text: 'Chat',
+            //         style: TextStyle(
+            //           fontSize: 25,
+            //           fontWeight: FontWeight.bold,
+            //           color: Theme.of(context)
+            //               .primaryColor, // Use the desired color
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // )
+          ),
+          // Positioned(
+          //     bottom: mq.height * .04,
+          //     child: const Text(
+          //       "Made with ❤️",
+          //       style: TextStyle(fontSize: 15),
+          //     )),
           Positioned(
-              bottom: mq.height * .04,
-              child: const Text(
-                "Made with ❤️",
-                style: TextStyle(fontSize: 20),
-              ))
+            bottom: mq.height * .04,
+            child: AnimatedTextKit(
+              animatedTexts: [
+                TyperAnimatedText(
+                  'Made with ❤️',
+                  textStyle: const TextStyle(
+                    fontSize: 15,
+                  ),
+                  speed: const Duration(milliseconds: 70),
+                ),
+              ],
+              totalRepeatCount: 1,
+            ),
+          )
         ],
       ),
     );
