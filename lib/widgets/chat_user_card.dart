@@ -90,13 +90,23 @@ class _ChatUserCardState extends State<ChatUserCard> {
                                 Icons.done_all_sharp,
                                 color: Colors.blue,
                               ),
-                            Text(
-                              _message!.msg.length > 17
-                                  ? '${_message!.msg.substring(0, 17)}...'
-                                  : _message!.msg,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            _message!.type == "text"
+                                ? Text(
+                                    _message!.msg.length > 17
+                                        ? '${_message!.msg.substring(0, 17)}...'
+                                        : _message!.msg,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                                : const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.camera_alt,
+                                        size: 17,
+                                      ),
+                                      Text(" Image")
+                                    ],
+                                  ),
                           ],
                         )
                     ],

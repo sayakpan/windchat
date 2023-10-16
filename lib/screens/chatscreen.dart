@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +20,7 @@ class _ChatScreenState extends State<ChatScreen> {
   // For handling text field
   final _textController = TextEditingController();
   bool _showEmoji = false;
+  bool _isImageUploading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +103,20 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Column(
                 children: [
                   _chatContent(),
+                  if (_isImageUploading)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                          padding: EdgeInsets.only(
+                              left: mq.width * .03, right: mq.width * .03),
+                          child: LinearProgressIndicator(
+                            borderRadius: BorderRadius.circular(50),
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 175, 36),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                Color.fromARGB(255, 255, 116, 41)),
+                          )),
+                    ),
                   _chatSendBox(),
                   if (_showEmoji)
                     SizedBox(
@@ -209,11 +223,17 @@ class _ChatScreenState extends State<ChatScreen> {
                 // Gallery Button
                 IconButton(
                   onPressed: () async {
-                    // Pick image from gallery
+                    // Pick Multiple images from gallery
                     final ImagePicker picker = ImagePicker();
                     final List<XFile> galleryimages =
-                        await picker.pickMultiImage();
-                    log(galleryimages.first.path);
+                        await picker.pickMultiImage(imageQuality: 20);
+                    setState(() => _isImageUploading = true); // Starting Upload
+                    for (var image in galleryimages) {
+                      await API.sendImages(widget.user, File(image.path));
+                    }
+                    setState(() {
+                      _isImageUploading = false;
+                    }); // Finished Upload
                   },
                   icon: Icon(
                     Icons.image,
@@ -229,9 +249,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: () async {
                       // Capture a photo.
                       final ImagePicker picker = ImagePicker();
-                      final XFile? cameraphoto =
-                          await picker.pickImage(source: ImageSource.camera);
-                      log('${cameraphoto?.path}');
+                      final XFile? cameraphoto = await picker.pickImage(
+                          source: ImageSource.camera, imageQuality: 20);
+                      setState(
+                          () => _isImageUploading = true); // Starting Upload
+
+                      await API.sendImages(
+                          widget.user, File(cameraphoto!.path));
+                      setState(() {
+                        _isImageUploading = false;
+                      }); // Finished Upload
                     },
                     icon: Icon(
                       Icons.camera_alt_rounded,
@@ -248,7 +275,7 @@ class _ChatScreenState extends State<ChatScreen> {
           MaterialButton(
             onPressed: () {
               if (_textController.text.isNotEmpty) {
-                API.sendMessage(widget.user, _textController.text);
+                API.sendMessage(widget.user, _textController.text, "text");
                 _textController.text = '';
               }
             },

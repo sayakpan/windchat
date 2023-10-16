@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:windchat/api/api.dart';
 import 'package:windchat/main.dart';
@@ -38,7 +39,9 @@ class _MessageCardState extends State<MessageCard> {
                     top: mq.height * .01,
                     bottom: mq.height * .01,
                   ),
-                  padding: EdgeInsets.all(mq.width * .03),
+                  padding: EdgeInsets.all(widget.message.type == "text"
+                      ? mq.width * .03
+                      : mq.width * .02),
                   decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -48,21 +51,19 @@ class _MessageCardState extends State<MessageCard> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
-
-                      // color: Theme.of(context).primaryColor,
-                      // border: Border.all(
-                      //     // color: const Color.fromARGB(255, 81, 201, 87)),
-                      //     color: const Color.fromARGB(255, 49, 66, 166)),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
                         bottomLeft: Radius.circular(30),
                         bottomRight: Radius.circular(5),
                       )),
-                  child: Text(
-                    widget.message.msg,
-                    style: const TextStyle(fontSize: 17, color: Colors.white),
-                  )),
+                  child: widget.message.type == "text"
+                      ? Text(
+                          widget.message.msg,
+                          style: const TextStyle(
+                              fontSize: 17, color: Colors.white),
+                        )
+                      : _imageMessage(widget.message.msg, Colors.white)),
             ),
           ],
         ),
@@ -131,20 +132,19 @@ class _MessageCardState extends State<MessageCard> {
                     top: mq.height * .01,
                     bottom: mq.height * .01,
                   ),
-                  padding: EdgeInsets.all(mq.width * .03),
+                  padding: EdgeInsets.all(widget.message.type == "text"
+                      ? mq.width * .03
+                      : mq.width * .02),
                   decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [
                           Color.fromARGB(255, 255, 255, 255),
                           Color.fromARGB(255, 235, 235, 235),
                           Color.fromARGB(255, 208, 208, 208)
-                        ], // Define your gradient colors
+                        ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
-                      // color: Colors.blue.shade100,
-                      // border: Border.all(color: Colors.blue.shade300),
-                      // color: const Color.fromARGB(255, 234, 234, 234),
                       border: Border.all(
                           color: const Color.fromARGB(255, 207, 207, 207)),
                       borderRadius: const BorderRadius.only(
@@ -153,14 +153,39 @@ class _MessageCardState extends State<MessageCard> {
                         bottomRight: Radius.circular(30),
                         bottomLeft: Radius.circular(30),
                       )),
-                  child: Text(
-                    widget.message.msg,
-                    style: const TextStyle(fontSize: 17, color: Colors.black),
-                  )),
+                  child: widget.message.type == "text"
+                      ? Text(
+                          widget.message.msg,
+                          style: const TextStyle(
+                              fontSize: 17, color: Colors.black),
+                        )
+                      : _imageMessage(widget.message.msg, Colors.black)),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _imageMessage(String imageUrl, Color errortext) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: CachedNetworkImage(
+          placeholder: (context, url) => const RefreshProgressIndicator(),
+          imageUrl: imageUrl,
+          errorWidget: (context, url, error) => Row(
+                children: [
+                  Icon(
+                    Icons.error,
+                    color: errortext,
+                    size: 20,
+                  ),
+                  Text(
+                    " Error : Image might not exists !",
+                    style: TextStyle(fontSize: 15, color: errortext),
+                  )
+                ],
+              )),
     );
   }
 }

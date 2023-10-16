@@ -106,35 +106,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ],
             ),
-            // RichText(
-            //   text: TextSpan(
-            //     children: [
-            //       const TextSpan(
-            //         text: 'Wind',
-            //         style: TextStyle(
-            //           fontSize: 25,
-            //           color: Colors.black,
-            //         ),
-            //       ),
-            //       TextSpan(
-            //         text: 'Chat',
-            //         style: TextStyle(
-            //           fontSize: 25,
-            //           fontWeight: FontWeight.bold,
-            //           color: Theme.of(context)
-            //               .primaryColor, // Use the desired color
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // )
           ),
-          // Positioned(
-          //     bottom: mq.height * .04,
-          //     child: const Text(
-          //       "Made with ❤️",
-          //       style: TextStyle(fontSize: 15),
-          //     )),
           Positioned(
             bottom: mq.height * .04,
             child: AnimatedTextKit(

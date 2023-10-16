@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:fcm_channels_manager/fcm_channels_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:windchat/screens/splashscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -15,6 +14,7 @@ Future<void> main() async {
 }
 
 late Size mq;
+var logger = Logger();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'WindChat',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
             textTheme: GoogleFonts.outfitTextTheme(),
             colorScheme:
@@ -45,12 +46,6 @@ Future<void> _initializeFirebase() async {
 // Notification Channel Initialization
 
 Future<void> _initializeNotificationChannel() async {
-  // var result = await FlutterNotificationChannel.registerNotificationChannel(
-  //   description: 'Message Notification for chats',
-  //   id: 'chats',
-  //   importance: NotificationImportance.IMPORTANCE_HIGH,
-  //   name: 'Chats',
-  // );
   final result = await FcmChannelsManager().registerChannel(
     id: "chats",
     name: "Chats",
@@ -62,9 +57,9 @@ Future<void> _initializeNotificationChannel() async {
     sound: true,
     badge: true,
   );
-  log(result!);
+  logger.i(result!);
   final channesl = await FcmChannelsManager().getChannels();
   for (var element in channesl) {
-    log(element.id);
+    logger.i(element.id);
   }
 }

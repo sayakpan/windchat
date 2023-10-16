@@ -1,23 +1,19 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/models/messages.dart';
 
 class API {
   // Used for firebase authentication
   static FirebaseAuth auth = FirebaseAuth.instance;
-
   // Used for Accessing Firebase Cloud
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   // Used for Accessing Firebase Storage
   static FirebaseStorage storage = FirebaseStorage.instance;
 
@@ -81,14 +77,14 @@ class API {
         .update({"about": ownuser.about});
   }
 
-// ************************ ChatBox API ************************
+  //************************ ChatBox API ************************
 
-// Function to create unique conversation id between sender and receiver
+  // Function to create unique conversation id between sender and receiver
   static String getConversationID(String id) => user.uid.hashCode <= id.hashCode
       ? '${user.uid}_$id'
       : '${id}_${user.uid}';
 
-// Function to get all messages of a specific conversation
+  // Function to get all messages of a specific conversation
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
       ChatUser chatuser) {
     return firestore
@@ -96,8 +92,9 @@ class API {
         .snapshots();
   }
 
-// Function to Send a message
-  static Future<void> sendMessage(ChatUser sendtoUser, String msg) async {
+  // Function to Send a message
+  static Future<void> sendMessage(
+      ChatUser sendtoUser, String msg, String type) async {
     // Taking sending time as message document id in firebase
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -105,7 +102,7 @@ class API {
         msg: msg,
         toID: sendtoUser.id,
         read: '',
-        type: 'text',
+        type: type,
         sent: time,
         fromID: user.uid);
 
@@ -118,7 +115,7 @@ class API {
         .then((value) => {sendPushNotification(sendtoUser, msg)});
   }
 
-// Mark messages as Read when viewed - Set Read Value with Time
+  // Mark messages as Read when viewed - Set Read Value with Time
   static Future<void> setMessageReadStatus(Messages message) async {
     firestore
         .collection('chats/${getConversationID(message.fromID)}/messages')
@@ -136,11 +133,7 @@ class API {
         .snapshots();
   }
 
-  //***********************************************************************
-  //*************************                     *************************
   //*************************  Push Notification  *************************
-  //*************************                     *************************
-  //***********************************************************************
 
   static FirebaseMessaging firemsg = FirebaseMessaging.instance;
 
@@ -154,7 +147,7 @@ class API {
             .collection('users')
             .doc(user.uid)
             .update({"push_token": ownuser.pushToken});
-        log(ownuser.pushToken);
+        logger.i(ownuser.pushToken);
       }
     });
   }
@@ -178,7 +171,7 @@ class API {
         },
       };
 
-      log(jsonEncode(body));
+      logger.d(jsonEncode(body));
 
       var response = await post(
           Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -187,21 +180,16 @@ class API {
             HttpHeaders.contentTypeHeader: "application/json",
             HttpHeaders.authorizationHeader: "key=$serverkey"
           });
-      log('Response status: ${response.statusCode}');
-      log('Response body: ${response.body}');
+      logger.i('Response status: ${response.statusCode}');
+      logger.i('Response body: ${response.body}');
     } catch (e) {
-      log('\nERROR : sendPushNotification - $e');
+      logger.i('\nERROR : sendPushNotification - $e');
     }
   }
 
-  //***********************************************************************
-  //*************************                     *************************
   //************************* Additional Features *************************
-  //*************************                     *************************
-  //***********************************************************************
 
   // Update Profile Image
-
   static Future<void> updateProfileImage(File imagefile) async {
     // Get the extension of image
     final extension = imagefile.path.split('.').last;
@@ -209,26 +197,32 @@ class API {
     final reference =
         storage.ref().child('profileimages/${user.uid}.$extension');
 
-    // Image Size before compression
-    log('Image Size : ${imagefile.lengthSync() / 1000} kb');
-
-    // Compress the image in a temporary directory
-    var tempDir = await getTemporaryDirectory();
-    var targetPath = "${tempDir.path}/${user.uid}.$extension";
-
-    var result = await FlutterImageCompress.compressAndGetFile(
-      imagefile.absolute.path,
-      targetPath,
-      quality: 60,
-    );
-    await reference.putFile(File(result!.path)).then((p0) =>
-        {log('Compressed Image Size : ${p0.bytesTransferred / 1000} kb')});
+    await reference.putFile(File(imagefile.path)).then((p0) => {
+          logger.w(
+              'Compressed Profile Image Size : ${p0.bytesTransferred / 1000} kb')
+        });
     ownuser.image = await reference.getDownloadURL();
-    log('${ownuser.name} - Profile Image Updated\nImage URL : ${ownuser.image}');
+    logger.w(
+        '${ownuser.name} - Profile Image Updated\nImage URL : ${ownuser.image}');
 
     await firestore
         .collection('users')
         .doc(user.uid)
         .update({'image': ownuser.image});
+  }
+
+  // Send Images
+  static Future<void> sendImages(ChatUser toUser, File imagefile) async {
+    final extension = imagefile.path.split('.').last;
+    final reference = storage.ref().child(
+        'images/${getConversationID(toUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$extension');
+
+    logger.w('Image Size : ${imagefile.lengthSync() / 1000} kb');
+
+    await reference.putFile(File(imagefile.path)).then((p0) =>
+        {logger.w('Uploaded Image Size : ${p0.bytesTransferred / 1000} kb')});
+
+    final imageURL = await reference.getDownloadURL();
+    await sendMessage(toUser, imageURL, "image");
   }
 }
