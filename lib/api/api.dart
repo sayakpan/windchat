@@ -41,6 +41,70 @@ class API {
         .snapshots();
   }
 
+  // Get All Users from Firebase
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsersByIdList(
+      List<String> idlist) {
+    return firestore
+        .collection("users")
+        .where('id', whereIn: idlist)
+        .snapshots();
+  }
+
+  // Get My Contacts only from Firebase
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyContactUsers() {
+    return firestore
+        .collection("users")
+        .doc(user.uid)
+        .collection("contacts")
+        .where("status", whereNotIn: ["requested", "rejected"]).snapshots();
+  }
+
+  // Add Friend User
+  static Future<bool> addNewContact(String email) async {
+    // trim email for space and small letters
+    email = email.trim().toLowerCase();
+
+    var userdata = await firestore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+
+    if (userdata.docs.isNotEmpty && userdata.docs.first.id != user.uid) {
+      firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection("contacts")
+          .doc(userdata.docs.first.id)
+          .set({"email": email, "status": "requested"});
+      firestore
+          .collection('users')
+          .doc(userdata.docs.first.id)
+          .collection("contacts")
+          .doc(user.uid)
+          .set({"email": user.email, "status": "newrequest"});
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // Accept a Friend User
+  static Future<void> acceptOrRejectNewContact(
+      ChatUser requestedUser, String status) async {
+    firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection("contacts")
+        .doc(requestedUser.id)
+        .update({"status": status});
+    firestore
+        .collection('users')
+        .doc(requestedUser.id)
+        .collection("contacts")
+        .doc(user.uid)
+        .update({"status": status});
+  }
+
   // Check existing User
   static Future<bool> userExists() async {
     var documentSnapshot =
@@ -109,10 +173,12 @@ class API {
     final reference = firestore
         .collection('chats/${getConversationID(sendtoUser.id)}/messages');
 
-    await reference
-        .doc(time)
-        .set(message.toJson())
-        .then((value) => {sendPushNotification(sendtoUser, msg)});
+    await reference.doc(time).set(message.toJson()).then((value) => {
+          if (type == "text")
+            {sendPushNotification(sendtoUser, msg)}
+          else
+            {sendPushNotification(sendtoUser, "📸 Image")}
+        });
   }
 
   // Mark messages as Read when viewed - Set Read Value with Time

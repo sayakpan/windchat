@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/messages.dart';
+import 'package:windchat/screens/userprofilescreen.dart';
 import 'package:windchat/widgets/message_card.dart';
 import '../api/api.dart';
 import '../models/chat_user.dart';
@@ -40,6 +41,13 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Scaffold(
             appBar: AppBar(
               title: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) =>
+                              UserProfileScreen(user: widget.user))));
+                },
                 child: Row(
                   children: [
                     //User Profile Image
@@ -226,7 +234,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     // Pick Multiple images from gallery
                     final ImagePicker picker = ImagePicker();
                     final List<XFile> galleryimages =
-                        await picker.pickMultiImage(imageQuality: 20);
+                        await picker.pickMultiImage(imageQuality: 18);
                     setState(() => _isImageUploading = true); // Starting Upload
                     for (var image in galleryimages) {
                       await API.sendImages(widget.user, File(image.path));
@@ -250,7 +258,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       // Capture a photo.
                       final ImagePicker picker = ImagePicker();
                       final XFile? cameraphoto = await picker.pickImage(
-                          source: ImageSource.camera, imageQuality: 20);
+                          source: ImageSource.camera, imageQuality: 18);
                       setState(
                           () => _isImageUploading = true); // Starting Upload
 

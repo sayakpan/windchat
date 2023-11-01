@@ -225,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // Pick an image.
                           final ImagePicker picker = ImagePicker();
                           final XFile? galleryphoto = await picker.pickImage(
-                              source: ImageSource.gallery, imageQuality: 30);
+                              source: ImageSource.gallery, imageQuality: 18);
                           logger.w('${galleryphoto?.path}');
                           API
                               .updateProfileImage(File(galleryphoto!.path))
@@ -254,7 +254,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // Capture a photo.
                           final ImagePicker picker = ImagePicker();
                           final XFile? cameraphoto = await picker.pickImage(
-                              source: ImageSource.camera, imageQuality: 30);
+                              source: ImageSource.camera, imageQuality: 18);
                           logger.w('${cameraphoto?.path}');
                           API
                               .updateProfileImage(File(cameraphoto!.path))
