@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
@@ -56,7 +57,17 @@ class API {
         .collection("users")
         .doc(user.uid)
         .collection("contacts")
-        .where("status", whereNotIn: ["requested", "rejected"]).snapshots();
+        .where("status",
+            whereNotIn: ["requested", "rejected", "newrequest"]).snapshots();
+  }
+
+  // Get My Contacts only from Firebase
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getPendingRequestUsers() {
+    return firestore
+        .collection("users")
+        .doc(user.uid)
+        .collection("contacts")
+        .where("status", whereIn: ["newrequest"]).snapshots();
   }
 
   // Add Friend User
@@ -199,6 +210,23 @@ class API {
         .snapshots();
   }
 
+  // Last seen
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getChatUserInfo(
+      ChatUser chatuser) {
+    return firestore
+        .collection('users')
+        .where("id", isEqualTo: chatuser.id)
+        .snapshots();
+  }
+
+  // Online status update
+  static Future<void> updateOnlineStatus(bool isonline) async {
+    firestore.collection('users').doc(user.uid).update({
+      "is_online": isonline,
+      "last_active": DateTime.now().millisecondsSinceEpoch.toString()
+    });
+  }
+
   //*************************  Push Notification  *************************
 
   static FirebaseMessaging firemsg = FirebaseMessaging.instance;
@@ -213,7 +241,7 @@ class API {
             .collection('users')
             .doc(user.uid)
             .update({"push_token": ownuser.pushToken});
-        logger.i(ownuser.pushToken);
+        log("getPushToken() : PushToken - ${ownuser.pushToken}");
       }
     });
   }
@@ -237,8 +265,6 @@ class API {
         },
       };
 
-      logger.d(jsonEncode(body));
-
       var response = await post(
           Uri.parse('https://fcm.googleapis.com/fcm/send'),
           body: jsonEncode(body),
@@ -246,10 +272,10 @@ class API {
             HttpHeaders.contentTypeHeader: "application/json",
             HttpHeaders.authorizationHeader: "key=$serverkey"
           });
-      logger.i('Response status: ${response.statusCode}');
-      logger.i('Response body: ${response.body}');
+      log('sendPushNotification : Response status: ${response.statusCode}');
+      log('sendPushNotification : Response body: ${response.body}');
     } catch (e) {
-      logger.i('\nERROR : sendPushNotification - $e');
+      log('sendPushNotification : ERROR - $e');
     }
   }
 

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:windchat/api/api.dart';
 import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
@@ -19,11 +21,27 @@ class _HomeScreenState extends State<HomeScreen> {
   List<ChatUser> userlist = [];
   List<String> idlist = [];
   List<String> newrequestList = [];
+  List<ChatUser> pendingrequestlist = [];
 
   @override
   void initState() {
     super.initState();
     _initialiseOwnUser();
+
+// To set the online status according to the System Lifecycle
+    API.updateOnlineStatus(true);
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      logger.w("SystemChannels lifecycle : $message");
+      if (message!.contains("paused")) {
+        API.updateOnlineStatus(false);
+      }
+
+      if (message.contains("resumed")) {
+        API.updateOnlineStatus(true);
+      }
+
+      return Future.value(message);
+    });
   }
 
   Future<void> _initialiseOwnUser() async {
@@ -58,6 +76,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
+            icon: const Icon(CupertinoIcons.search), // Profile Button
+            onPressed: () {},
+          ),
+          IconButton(
             icon: const Icon(Icons.person), // Profile Button
             onPressed: () {
               Navigator.push(
@@ -68,7 +90,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      // drawer: SideDrawer(user: API.ownuser),
       drawer: FutureBuilder(
         future: API.getOwnUser(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -81,75 +102,130 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      body: StreamBuilder(
-        // Get the id of contacts only
-        stream: API.getMyContactUsers(),
-        builder: (context, snapshot) {
-          final myContactUsersData = snapshot.data?.docs;
-          idlist =
-              myContactUsersData?.map((element) => element.id).toList() ?? [];
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Stream for Pending Requests
+          StreamBuilder(
+            stream: API.getPendingRequestUsers(),
+            builder: (context, snapshot) {
+              final myContactUsersData = snapshot.data?.docs;
+              idlist =
+                  myContactUsersData?.map((element) => element.id).toList() ??
+                      [];
 
-          // Getting the list of id of the new incoming requests - to be used later
-          newrequestList = myContactUsersData
-                  ?.where((doc) => doc.data()['status'] == 'newrequest')
-                  .map((element) => element.id)
-                  .toList() ??
-              [];
+              newrequestList = myContactUsersData
+                      ?.where((doc) => doc.data()['status'] == 'newrequest')
+                      .map((element) => element.id)
+                      .toList() ??
+                  [];
 
-          if (idlist.isNotEmpty) {
-            return StreamBuilder(
-                // Get the User of the contacts, provided by the upper stream
-                stream: API.getAllUsersByIdList(idlist),
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                    case ConnectionState.none:
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    case ConnectionState.active:
-                    case ConnectionState.done:
-                      final data = snapshot.data?.docs;
-                      userlist = data
-                              ?.map((element) =>
-                                  ChatUser.fromJson(element.data()))
-                              .toList() ??
-                          [];
-                      if (userlist.isNotEmpty) {
-                        return ListView.builder(
-                            itemCount: userlist.length,
-                            padding: EdgeInsets.only(top: mq.height * 0.02),
-                            physics: const BouncingScrollPhysics(),
-                            itemBuilder: ((context, index) {
-                              if (newrequestList.contains(userlist[index].id))
-                              // For users with a new request
-                              {
-                                return RequestChatUserCard(
-                                  user: userlist[index],
-                                );
-                              }
-                              // Existing chats
-                              else {
-                                return ChatUserCard(
-                                  user: userlist[index],
-                                );
-                              }
-                            }));
-                      } else {
-                        return const Center(child: Text("No Users Found"));
-                      }
-                  }
-                });
-          } else {
-            return const Center(
-                child: Text(
-              "No chat buddies in sight?\nTime to add some friends here. 👋",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 17),
-            ));
-          }
-        },
+              if (newrequestList.isNotEmpty) {
+                return Flexible(
+                  child: StreamBuilder(
+                      stream: API.getAllUsersByIdList(newrequestList),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                          case ConnectionState.none:
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            final data = snapshot.data?.docs;
+                            pendingrequestlist = data
+                                    ?.map((element) =>
+                                        ChatUser.fromJson(element.data()))
+                                    .toList() ??
+                                [];
+                            if (pendingrequestlist.isNotEmpty) {
+                              return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: pendingrequestlist.length,
+                                  padding:
+                                      EdgeInsets.only(top: mq.height * 0.02),
+                                  physics: const BouncingScrollPhysics(),
+                                  itemBuilder: ((context, index) {
+                                    return RequestChatUserCard(
+                                      user: pendingrequestlist[index],
+                                    );
+                                  }));
+                            } else {
+                              return const Center(
+                                  child: Text("No Pending Request"));
+                            }
+                        }
+                      }),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+
+          // Stream for CHATS
+          StreamBuilder(
+            stream: API.getMyContactUsers(),
+            builder: (context, snapshot) {
+              final myContactUsersData = snapshot.data?.docs;
+              idlist =
+                  myContactUsersData?.map((element) => element.id).toList() ??
+                      [];
+
+              if (idlist.isNotEmpty) {
+                return Flexible(
+                  child: StreamBuilder(
+                      // Get the User of the contacts, provided by the upper stream
+                      stream: API.getAllUsersByIdList(idlist),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                          case ConnectionState.none:
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            final data = snapshot.data?.docs;
+                            userlist = data
+                                    ?.map((element) =>
+                                        ChatUser.fromJson(element.data()))
+                                    .toList() ??
+                                [];
+                            if (userlist.isNotEmpty) {
+                              return ListView.builder(
+                                  itemCount: userlist.length,
+                                  padding:
+                                      EdgeInsets.only(top: mq.height * 0.02),
+                                  physics: const BouncingScrollPhysics(),
+                                  itemBuilder: ((context, index) {
+                                    return ChatUserCard(
+                                      user: userlist[index],
+                                    );
+                                  }));
+                            } else {
+                              return const Center(
+                                  child: Text("No Users Found"));
+                            }
+                        }
+                      }),
+                );
+              } else {
+                return const Center(
+                    child: Text(
+                  "No chat buddies in sight?\nTime to add some friends here. 👋",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 17),
+                ));
+              }
+            },
+          ),
+        ],
       ),
+
+      // Add Contact Button
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           addContactDialog();
@@ -218,6 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 MaterialButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    logger.i(email);
                     if (email.isNotEmpty) {
                       API.addNewContact(email).then((value) {
                         if (value) {
@@ -231,7 +308,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                       });
                     } else {
-                      Navigator.pop(context);
                       Dialogs.showSnackBar(
                           context, "Email is required", Colors.red);
                     }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:windchat/helper/mydateutility.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/messages.dart';
 import 'package:windchat/screens/userprofilescreen.dart';
@@ -41,50 +42,73 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Scaffold(
             appBar: AppBar(
               title: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) =>
-                              UserProfileScreen(user: widget.user))));
-                },
-                child: Row(
-                  children: [
-                    //User Profile Image
-                    CircleAvatar(
-                      radius: 22.0,
-                      child: ClipOval(
-                        child: Image.network(
-                          widget.user.image,
-                          fit: BoxFit.cover,
-                          width: 100,
-                          height: 100,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //Username
-                        Text(
-                          widget.user.name,
-                          style: const TextStyle(fontSize: 18),
-                        ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) =>
+                                UserProfileScreen(user: widget.user))));
+                  },
+                  child: StreamBuilder(
+                    stream: API.getChatUserInfo(widget.user),
+                    builder: (context, snapshot) {
+                      final chatUserInfo = snapshot.data?.docs;
+                      final chatUserlist = chatUserInfo
+                              ?.map((element) =>
+                                  ChatUser.fromJson(element.data()))
+                              .toList() ??
+                          [];
 
-                        // Last Seen of User
-                        const Text(
-                          "last seen today at 2:23 pm",
-                          // widget.user.lastActive,
-                          style: TextStyle(fontSize: 14),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+                      return Row(
+                        children: [
+                          //User Profile Image
+                          CircleAvatar(
+                            radius: 22.0,
+                            child: ClipOval(
+                              child: Image.network(
+                                chatUserlist.isNotEmpty
+                                    ? chatUserlist[0].image
+                                    : widget.user.image,
+                                fit: BoxFit.cover,
+                                width: 100,
+                                height: 100,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //Username
+                              Text(
+                                chatUserlist.isNotEmpty
+                                    ? chatUserlist[0].name
+                                    : widget.user.name,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+
+                              // Last Seen of User
+                              Text(
+                                chatUserlist.isNotEmpty
+                                    ? chatUserlist[0].isOnline
+                                        ? "Online"
+                                        : MyDateUtility.getLastActiveTime(
+                                            context: context,
+                                            lastActive:
+                                                chatUserlist[0].lastActive)
+                                    : MyDateUtility.getLastActiveTime(
+                                        context: context,
+                                        lastActive: widget.user.lastActive),
+                                style: const TextStyle(fontSize: 14),
+                              )
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  )),
               leading: const BackButton(),
               elevation: 0,
               bottom: PreferredSize(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:fcm_channels_manager/fcm_channels_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -57,9 +59,9 @@ Future<void> _initializeNotificationChannel() async {
     sound: true,
     badge: true,
   );
-  logger.i(result!);
+  log("_initializeNotificationChannel() : ${result!}");
   final channesl = await FcmChannelsManager().getChannels();
   for (var element in channesl) {
-    logger.i(element.id);
+    log("_initializeNotificationChannel() : ${element.id}");
   }
 }
