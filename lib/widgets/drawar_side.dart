@@ -99,8 +99,8 @@ class _SideDrawerState extends State<SideDrawer> {
             ]),
           ),
           ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Home'),
+            leading: const Icon(Icons.refresh),
+            title: const Text('Refresh'),
             onTap: () {
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => const HomeScreen()));

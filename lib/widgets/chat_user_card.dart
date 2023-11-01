@@ -4,6 +4,7 @@ import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/models/messages.dart';
 import 'package:windchat/screens/chatscreen.dart';
+import 'package:windchat/screens/userprofilescreen.dart';
 
 import '../api/api.dart';
 import '../helper/unread_counter.dart';
@@ -51,14 +52,24 @@ class _ChatUserCardState extends State<ChatUserCard> {
 
               return ListTile(
                   // Profile image
-                  leading: CircleAvatar(
-                    radius: 25.0,
-                    child: ClipOval(
-                      child: Image.network(
-                        widget.user.image,
-                        fit: BoxFit.cover,
-                        width: 100,
-                        height: 100,
+                  leading: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserProfileScreen(
+                                    user: widget.user,
+                                  )));
+                    },
+                    child: CircleAvatar(
+                      radius: 25.0,
+                      child: ClipOval(
+                        child: Image.network(
+                          widget.user.image,
+                          fit: BoxFit.cover,
+                          width: 100,
+                          height: 100,
+                        ),
                       ),
                     ),
                   ),
@@ -90,13 +101,23 @@ class _ChatUserCardState extends State<ChatUserCard> {
                                 Icons.done_all_sharp,
                                 color: Colors.blue,
                               ),
-                            Text(
-                              _message!.msg.length > 20
-                                  ? '${_message!.msg.substring(0, 20)}...'
-                                  : _message!.msg,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            _message!.type == "text"
+                                ? Text(
+                                    _message!.msg.length > 17
+                                        ? '${_message!.msg.substring(0, 17)}...'
+                                        : _message!.msg,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                                : const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.camera_alt,
+                                        size: 17,
+                                      ),
+                                      Text(" Image")
+                                    ],
+                                  ),
                           ],
                         )
                     ],

@@ -55,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
       log('\nsignInWithGoogle : $e');
+      // ignore: use_build_context_synchronously
       Dialogs.showSnackBar(
           context, 'No Internet, Please try later.', Colors.black);
       return null;
