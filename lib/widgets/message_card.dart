@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:windchat/api/api.dart';
+import 'package:windchat/helper/custom_chat_theme.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/messages.dart';
 
@@ -42,16 +43,9 @@ class _MessageCardState extends State<MessageCard> {
                   padding: EdgeInsets.all(widget.message.type == "text"
                       ? mq.width * .03
                       : mq.width * .02),
-                  decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromARGB(255, 122, 110, 234),
-                          Color.fromARGB(255, 69, 54, 207),
-                        ], // Define your gradient colors
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      borderRadius: BorderRadius.only(
+                  decoration: BoxDecoration(
+                      gradient: CustomTheme.customTheme('sender'),
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
                         bottomLeft: Radius.circular(30),
@@ -136,17 +130,9 @@ class _MessageCardState extends State<MessageCard> {
                       ? mq.width * .03
                       : mq.width * .02),
                   decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color.fromARGB(255, 255, 255, 255),
-                          Color.fromARGB(255, 235, 235, 235),
-                          Color.fromARGB(255, 208, 208, 208)
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      border: Border.all(
-                          color: const Color.fromARGB(255, 207, 207, 207)),
+                      gradient: CustomTheme.customTheme('receiver'),
+                      // border: Border.all(
+                      //     color: const Color.fromARGB(255, 207, 207, 207)),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(5),
                         topRight: Radius.circular(30),

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:windchat/helper/custom_chat_theme.dart';
 import 'package:windchat/helper/mydateutility.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/messages.dart';
@@ -122,15 +123,8 @@ class _ChatScreenState extends State<ChatScreen> {
             body: Container(
               width: double.infinity,
               height: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 168, 241, 246),
-                    Color.fromARGB(255, 244, 246, 206),
-                  ], // Define your gradient colors
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+              decoration: BoxDecoration(
+                gradient: CustomTheme.customChatBGTheme(),
               ),
               child: Column(
                 children: [
