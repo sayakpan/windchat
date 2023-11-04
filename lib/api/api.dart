@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -71,7 +72,7 @@ class API {
   }
 
   // Add Friend User
-  static Future<bool> addNewContact(String email) async {
+  static Future<String> addNewContact(String email) async {
     // trim email for space and small letters
     email = email.trim().toLowerCase();
 
@@ -80,22 +81,39 @@ class API {
         .where('email', isEqualTo: email)
         .get();
 
-    if (userdata.docs.isNotEmpty && userdata.docs.first.id != user.uid) {
-      firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection("contacts")
-          .doc(userdata.docs.first.id)
-          .set({"email": email, "status": "requested"});
-      firestore
-          .collection('users')
-          .doc(userdata.docs.first.id)
-          .collection("contacts")
-          .doc(user.uid)
-          .set({"email": user.email, "status": "newrequest"});
-      return true;
+    var existingContact = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection("contacts")
+        .doc(userdata.docs.first.id)
+        .get();
+
+    if (existingContact.exists) {
+      if (existingContact['status'] == "requested") {
+        return "requested";
+      } else if (existingContact['status'] == "newrequest") {
+        return "newrequest";
+      } else {
+        return "existing";
+      }
     } else {
-      return false;
+      if (userdata.docs.isNotEmpty && userdata.docs.first.id != user.uid) {
+        firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection("contacts")
+            .doc(userdata.docs.first.id)
+            .set({"email": email, "status": "requested"});
+        firestore
+            .collection('users')
+            .doc(userdata.docs.first.id)
+            .collection("contacts")
+            .doc(user.uid)
+            .set({"email": user.email, "status": "newrequest"});
+        return "added";
+      } else {
+        return "nouser";
+      }
     }
   }
 
@@ -316,5 +334,15 @@ class API {
 
     final imageURL = await reference.getDownloadURL();
     await sendMessage(toUser, imageURL, "image");
+  }
+
+  //************************* Some Other Useful Methods *************************
+
+  static bool validateEmail(String email) {
+    email = email.trim().toLowerCase();
+    if (EmailValidator.validate(email)) {
+      return true;
+    }
+    return false;
   }
 }

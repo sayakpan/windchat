@@ -23,6 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> newrequestList = [];
   List<ChatUser> pendingrequestlist = [];
 
+  final _formkey_addcontact = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (message.contains("resumed")) {
         API.updateOnlineStatus(true);
+      }
+
+      if (message.contains("inactive")) {
+        API.updateOnlineStatus(false);
+      }
+
+      if (message.contains("detached")) {
+        API.updateOnlineStatus(false);
       }
 
       return Future.value(message);
@@ -213,11 +223,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       }),
                 );
               } else {
-                return const Center(
-                    child: Text(
-                  "No chat buddies in sight?\nTime to add some friends here. 👋",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 17),
+                return Center(
+                    child: Padding(
+                  padding: EdgeInsets.only(top: mq.height * .5),
+                  child: const Text(
+                    "No chat buddies in sight?\nTime to add some friends here. 👋",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 17),
+                  ),
                 ));
               }
             },
@@ -262,17 +275,23 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-        content: TextFormField(
-          maxLines: null,
-          onChanged: (value) => email = value,
-          decoration: InputDecoration(
-              hintText: "Enter Email",
-              prefixIcon: Icon(
-                Icons.email,
-                color: Theme.of(context).primaryColor,
-              ),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
+        content: Form(
+          key: _formkey_addcontact,
+          child: TextFormField(
+            maxLines: null,
+            onChanged: (value) => email = value.trim().toLowerCase(),
+            validator: (value) => value != null && value.isNotEmpty
+                ? null
+                : 'Please enter a valid email',
+            decoration: InputDecoration(
+                hintText: "Enter Email",
+                prefixIcon: Icon(
+                  Icons.email,
+                  color: Theme.of(context).primaryColor,
+                ),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15))),
+          ),
         ),
         actions: [
           Padding(
@@ -293,23 +312,48 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 MaterialButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                    logger.i(email);
-                    if (email.isNotEmpty) {
-                      API.addNewContact(email).then((value) {
-                        if (value) {
-                          Dialogs.showSnackBar(context,
-                              "Contact Added Succesfully", Colors.green);
-                        } else {
-                          Dialogs.showSnackBar(
-                              context,
-                              "Contact not registered.\nAsk your friend to install WindChat.",
-                              Colors.red);
-                        }
-                      });
-                    } else {
-                      Dialogs.showSnackBar(
-                          context, "Email is required", Colors.red);
+                    if (_formkey_addcontact.currentState!.validate()) {
+                      // Navigator.pop(context);
+                      logger.i(email);
+                      logger.e(API.validateEmail(email));
+                      if (API.validateEmail(email)) {
+                        API.addNewContact(email).then((value) {
+                          logger.e(value);
+                          if (value == "added") {
+                            Navigator.pop(context);
+                            Dialogs.showSnackBar(context,
+                                "Request sent succesfully", Colors.green);
+                          } else if (value == "requested") {
+                            Navigator.pop(context);
+                            Dialogs.showSnackBar(
+                                context,
+                                "Your request is not accepted yet.",
+                                Colors.yellow.shade900);
+                          } else if (value == "newrequest") {
+                            Navigator.pop(context);
+                            Dialogs.showSnackBar(
+                                context,
+                                "You received a request from this user, just accept to chat.",
+                                Colors.green);
+                          } else if (value == "nouser") {
+                            Navigator.pop(context);
+                            Dialogs.showSnackBar(
+                                context,
+                                "Contact not registered.\nAsk your friend to install WindChat.",
+                                Colors.red);
+                          } else if (value == "existing") {
+                            Navigator.pop(context);
+                            Dialogs.showSnackBar(
+                                context,
+                                "Contact already there, just chat !",
+                                Colors.green);
+                          }
+                        });
+                      } else {
+                        Navigator.pop(context);
+                        Dialogs.showSnackBar(
+                            context, "Email not valid.", Colors.red);
+                      }
                     }
                   },
                   child: Text(
