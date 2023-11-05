@@ -11,4 +11,11 @@ class Pref {
   //for storing theme data
   static bool get isDarkMode => _box.get('isDarkMode') ?? false;
   static set isDarkMode(bool value) => _box.put('isDarkMode', value);
+
+  static int get gradientIndex => _box.get('gradientIndex') ?? 0;
+  static set gradientIndex(int value) => _box.put('gradientIndex', value);
+
+  static int get gradientIndexForMsg => _box.get('gradientIndexForMsg') ?? 0;
+  static set gradientIndexForMsg(int value) =>
+      _box.put('gradientIndexForMsg', value);
 }

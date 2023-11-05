@@ -66,10 +66,11 @@ class _HomeScreenState extends State<HomeScreen> {
         title: RichText(
           text: TextSpan(
             children: [
-              const TextSpan(
+              TextSpan(
                 text: 'Wind',
                 style: TextStyle(
                   fontSize: 25,
+                  color: Theme.of(context).primaryColorDark,
                 ),
               ),
               TextSpan(

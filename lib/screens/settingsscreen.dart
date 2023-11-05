@@ -98,17 +98,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 )),
             SettingsGroup(
               items: [
+                // Chat Screen Theme Specifier
                 SettingsItem(
-                  onTap: () {},
+                  onTap: () {
+                    chooseMsgColor();
+                  },
                   icons: CupertinoIcons.pencil_outline,
                   iconStyle: IconStyle(
                     backgroundColor: Colors.red,
                   ),
-                  title: 'Appearance',
-                  subtitle: "Set the chat appearance",
+                  title: 'Chat Theme',
+                  subtitle: "Select message style",
                   subtitleStyle:
                       TextStyle(color: Theme.of(context).primaryColorDark),
                 ),
+
+                // Message Theme Specifier
+                SettingsItem(
+                  onTap: () {
+                    chooseChatColor();
+                  },
+                  icons: CupertinoIcons.wand_stars,
+                  iconStyle: IconStyle(
+                    backgroundColor: Colors.green,
+                  ),
+                  title: 'Chat Background',
+                  subtitle: "Select background style for chats",
+                  subtitleStyle:
+                      TextStyle(color: Theme.of(context).primaryColorDark),
+                ),
+
+                // Dark Mode Toggle
                 SettingsItem(
                   onTap: () {},
                   icons: Icons.dark_mode_rounded,
@@ -122,9 +142,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitleStyle:
                       TextStyle(color: Theme.of(context).primaryColorDark),
                   trailing: Switch(
-                    value: Get.isDarkMode,
+                    value: Pref.isDarkMode,
                     onChanged: (value) async {
-                      Get.changeTheme(Get.isDarkMode
+                      Get.changeTheme(Pref.isDarkMode
                           ? CustomTheme.lighttheme
                           : CustomTheme.darkTheme);
                       Pref.isDarkMode = !Pref.isDarkMode;
@@ -134,6 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ],
             ),
+
             SettingsGroup(
               items: [
                 SettingsItem(
@@ -192,6 +213,130 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // Dialog box to choose chat background
+  void chooseChatColor() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        contentPadding:
+            const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 5),
+        title: Row(
+          children: [
+            Icon(
+              CupertinoIcons.wand_stars,
+              color: Theme.of(context).primaryColor,
+              size: 30,
+            ),
+            Text(
+              "   Choose Chat Theme",
+              style: TextStyle(
+                  fontSize: 20, color: Theme.of(context).primaryColorDark),
+            )
+          ],
+        ),
+        content: SizedBox(
+          height: mq.height * .08,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            itemCount: CustomTheme.chatThemeGradient.length,
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                onTap: () {
+                  // Handle color selection here
+                  logger.e(index);
+                  Pref.gradientIndex = index;
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    gradient: CustomTheme.chatThemeGradient[index],
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(
+                            0.2), // Color and opacity of the shadow
+                        spreadRadius: 2, // Spread radius
+                        blurRadius: 4, // Blur radius
+                        offset: const Offset(0, 5), // Offset from the container
+                      ),
+                    ],
+                  ),
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Dialog box to choose Message background
+  void chooseMsgColor() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        contentPadding:
+            const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 5),
+        title: Row(
+          children: [
+            Icon(
+              CupertinoIcons.pencil_outline,
+              color: Theme.of(context).primaryColor,
+              size: 30,
+            ),
+            Text(
+              "   Choose Chat Theme",
+              style: TextStyle(
+                  fontSize: 20, color: Theme.of(context).primaryColorDark),
+            )
+          ],
+        ),
+        content: SizedBox(
+          height: mq.height * .08,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            itemCount: CustomTheme.msgThemeGradient.length,
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                onTap: () {
+                  // Handle color selection here
+                  logger.e(index);
+                  Pref.gradientIndexForMsg = index;
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    gradient: CustomTheme.msgThemeGradient[index],
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(
+                            0.2), // Color and opacity of the shadow
+                        spreadRadius: 2, // Spread radius
+                        blurRadius: 4, // Blur radius
+                        offset: const Offset(0, 5), // Offset from the container
+                      ),
+                    ],
+                  ),
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

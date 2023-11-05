@@ -10,6 +10,7 @@ import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/screens/auth/loginscreen.dart';
+import 'package:windchat/screens/settingsscreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final ChatUser user;
@@ -51,6 +52,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Navigator.pop(context);
             },
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings), // Hamburger menu icon
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            SettingsScreen(user: widget.user)));
+              },
+            ),
+          ],
         ),
         body: Form(
           key: _formkey,
@@ -85,8 +98,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _showModalBottom();
                         },
                         shape: const CircleBorder(),
-                        color: Colors.white,
-                        child: const Icon(Icons.edit),
+                        color: Theme.of(context).primaryColorLight,
+                        child: Icon(Icons.edit,
+                            color: Theme.of(context).primaryColorDark),
                       ),
                     )
                   ],

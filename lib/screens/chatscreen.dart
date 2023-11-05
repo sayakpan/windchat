@@ -6,6 +6,7 @@ import 'package:windchat/helper/custom_chat_theme.dart';
 import 'package:windchat/helper/mydateutility.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/messages.dart';
+import 'package:windchat/screens/auth/pref.dart';
 import 'package:windchat/screens/userprofilescreen.dart';
 import 'package:windchat/widgets/message_card.dart';
 import '../api/api.dart';
@@ -124,7 +125,8 @@ class _ChatScreenState extends State<ChatScreen> {
               width: double.infinity,
               height: double.infinity,
               decoration: BoxDecoration(
-                gradient: CustomTheme.customChatBGTheme("default", context),
+                gradient:
+                    CustomTheme.customChatBGTheme(Pref.gradientIndex, context),
               ),
               child: Column(
                 children: [

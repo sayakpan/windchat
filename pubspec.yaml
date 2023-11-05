@@ -53,6 +53,8 @@ dependencies:
   hive_flutter: ^1.1.0 
   # GetX
   get: ^4.6.6
+  # Color Picker
+  flex_color_picker: ^3.3.0
 
   firebase_analytics: ^10.5.1
   path_provider: ^2.1.1
