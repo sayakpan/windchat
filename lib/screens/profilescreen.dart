@@ -35,12 +35,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         appBar: AppBar(
           // toolbarHeight: mq.height * .09,
           title: RichText(
-            text: const TextSpan(
+            text: TextSpan(
               children: [
                 TextSpan(
                   text: 'Profile',
                   style: TextStyle(
                     fontSize: 25,
+                    color: Theme.of(context).primaryColorDark,
                   ),
                 ),
               ],
@@ -158,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
+                        foregroundColor: Theme.of(context).primaryColorLight,
                         minimumSize: Size(
                           mq.width * .3,
                           mq.height * .05,
@@ -179,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       "Update",
                       style: TextStyle(
                           fontSize: 15,
-                          color: Theme.of(context).primaryColorDark),
+                          color: Theme.of(context).primaryColorLight),
                     ),
                   ))
             ],

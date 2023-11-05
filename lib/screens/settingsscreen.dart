@@ -1,9 +1,11 @@
+import 'package:about/about.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:babstrap_settings_screen/babstrap_settings_screen.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:windchat/api/api.dart';
 import 'package:windchat/helper/custom_chat_theme.dart';
 import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
@@ -21,6 +23,15 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  late bool isActive;
+
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    super.initState();
+    isActive = widget.user.isOnline;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,23 +87,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 userMoreInfo: Container(
                   margin: const EdgeInsets.only(top: 6),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   decoration: BoxDecoration(
+                    color: isActive ? Colors.green.shade500 : Colors.red,
                     borderRadius: BorderRadius.circular(50.0),
                     border: Border.all(
-                      color: widget.user.isOnline
-                          ? Colors.green.shade300
-                          : Colors.red,
+                      color: isActive ? Colors.green.shade500 : Colors.red,
                       width: 1.0,
                     ),
                   ),
                   child: Text(
-                    widget.user.isOnline ? "Online" : "Offline",
-                    style: TextStyle(
+                    isActive ? "Online" : "Offline",
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: widget.user.isOnline
-                          ? Colors.green.shade300
-                          : Colors.red,
+                      color: Colors.white,
                     ),
                   ),
                 )),
@@ -120,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                   icons: CupertinoIcons.wand_stars,
                   iconStyle: IconStyle(
-                    backgroundColor: Colors.green,
+                    backgroundColor: Colors.blue,
                   ),
                   title: 'Chat Background',
                   subtitle: "Select background style for chats",
@@ -130,7 +138,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                 // Dark Mode Toggle
                 SettingsItem(
-                  onTap: () {},
+                  onTap: () {
+                    Get.changeTheme(Pref.isDarkMode
+                        ? CustomTheme.lighttheme
+                        : CustomTheme.darkTheme);
+                    Pref.isDarkMode = !Pref.isDarkMode;
+                    logger.e("Dark Mode : ${!Get.isDarkMode}");
+                  },
                   icons: Icons.dark_mode_rounded,
                   iconStyle: IconStyle(
                     iconsColor: Colors.white,
@@ -138,7 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     backgroundColor: const Color.fromARGB(255, 86, 86, 86),
                   ),
                   title: 'Dark mode',
-                  subtitle: "Automatic",
+                  subtitle: "Reduces eye strain at night",
                   subtitleStyle:
                       TextStyle(color: Theme.of(context).primaryColorDark),
                   trailing: Switch(
@@ -152,13 +166,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   ),
                 ),
+
+                // Active Status Toggle
+                SettingsItem(
+                  onTap: () {},
+                  icons: Icons.online_prediction,
+                  iconStyle: IconStyle(
+                    iconsColor: Colors.white,
+                    withBackground: true,
+                    backgroundColor: Colors.green,
+                  ),
+                  title: 'Active Status',
+                  subtitle: "Turn it off to go offline",
+                  subtitleStyle:
+                      TextStyle(color: Theme.of(context).primaryColorDark),
+                  trailing: Switch(
+                    value: isActive,
+                    onChanged: (value) async {
+                      setState(() {
+                        isActive = !isActive;
+                      });
+                      API.updateOnlineStatus(isActive);
+                      logger.e(isActive);
+                    },
+                  ),
+                ),
               ],
             ),
 
             SettingsGroup(
               items: [
                 SettingsItem(
-                  onTap: () {},
+                  onTap: () {
+                    showAboutDialog();
+                  },
                   icons: Icons.info_rounded,
                   iconStyle: IconStyle(
                     backgroundColor: Colors.purple,
@@ -337,6 +378,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
               );
             },
           ),
+        ),
+      ),
+    );
+  }
+
+  // About Dialog
+  void showAboutDialog() {
+    showAboutPage(
+      dialog: true,
+      context: context,
+      title: Text(
+        "About",
+        style: TextStyle(color: Theme.of(context).primaryColorDark),
+      ),
+      values: {
+        'version': '1.0',
+        'year': DateTime.now().year.toString(),
+      },
+      applicationLegalese: 'Copyright © Sayak, {{ year }}',
+      applicationDescription: Text(
+          'WindChat is your gateway to effortless and secure communication. Powered by Flutter and Firebase, WindChat offers real-time messaging, chat requests, and user-friendly profiles. Take control of your chat experience with our approval system. Enjoy status indicators, personalized profiles, and timely push notifications.',
+          style: TextStyle(color: Theme.of(context).primaryColorDark),
+          textAlign: TextAlign.justify),
+      children: const <Widget>[
+        LicensesPageListTile(
+          icon: Icon(CupertinoIcons.doc_text),
+        ),
+      ],
+      applicationIcon: const SizedBox(
+        width: 100,
+        height: 100,
+        child: Image(
+          image: AssetImage('assets/images/logo.png'),
         ),
       ),
     );
