@@ -10,6 +10,7 @@ import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/screens/auth/loginscreen.dart';
+import 'package:windchat/screens/settingsscreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final ChatUser user;
@@ -34,13 +35,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         appBar: AppBar(
           // toolbarHeight: mq.height * .09,
           title: RichText(
-            text: const TextSpan(
+            text: TextSpan(
               children: [
                 TextSpan(
                   text: 'Profile',
                   style: TextStyle(
                     fontSize: 25,
-                    color: Colors.black,
+                    color: Theme.of(context).primaryColorDark,
                   ),
                 ),
               ],
@@ -52,6 +53,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Navigator.pop(context);
             },
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings), // Hamburger menu icon
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            SettingsScreen(user: widget.user)));
+              },
+            ),
+          ],
         ),
         body: Form(
           key: _formkey,
@@ -86,8 +99,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _showModalBottom();
                         },
                         shape: const CircleBorder(),
-                        color: Colors.white,
-                        child: const Icon(Icons.edit),
+                        color: Theme.of(context).primaryColorLight,
+                        child: Icon(Icons.edit,
+                            color: Theme.of(context).primaryColorDark),
                       ),
                     )
                   ],
@@ -99,9 +113,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   top: mq.height * .3,
                   child: Text(
                     widget.user.name,
-                    style: const TextStyle(
-                      fontSize: 30,
-                    ),
+                    style: TextStyle(
+                        fontSize: 30,
+                        color: Theme.of(context).primaryColorDark),
                   )),
 
               // Email
@@ -109,9 +123,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   top: mq.height * .36,
                   child: Text(
                     widget.user.email,
-                    style: const TextStyle(
-                      fontSize: 20,
-                    ),
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).primaryColorDark),
                   )),
 
               //About Textform
@@ -120,6 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: mq.height * .15,
                 width: mq.width * .7,
                 child: TextFormField(
+                  style: TextStyle(color: Theme.of(context).primaryColorDark),
                   initialValue: widget.user.about,
                   onSaved: (newValue) => API.ownuser.about = newValue!,
                   validator: (value) => value != null && value.isNotEmpty
@@ -144,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
+                        foregroundColor: Theme.of(context).primaryColorLight,
                         minimumSize: Size(
                           mq.width * .3,
                           mq.height * .05,
@@ -161,9 +176,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                     },
                     icon: const Icon(Icons.edit),
-                    label: const Text(
+                    label: Text(
                       "Update",
-                      style: TextStyle(fontSize: 15),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Theme.of(context).primaryColorLight),
                     ),
                   ))
             ],

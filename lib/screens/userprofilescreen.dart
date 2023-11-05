@@ -21,20 +21,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       // Scaffold From here
       child: Scaffold(
         appBar: AppBar(
-          // toolbarHeight: mq.height * .09,
-          // title: RichText(
-          //   text: TextSpan(
-          //     children: [
-          //       TextSpan(
-          //         text: widget.user.name,
-          //         style: const TextStyle(
-          //           fontSize: 25,
-          //           color: Colors.black,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back), // Hamburger menu icon
             onPressed: () {
@@ -70,9 +56,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 top: mq.height * .3,
                 child: Text(
                   widget.user.name,
-                  style: const TextStyle(
-                    fontSize: 30,
-                  ),
+                  style: TextStyle(
+                      fontSize: 30, color: Theme.of(context).primaryColorDark),
                 )),
 
             // Email
@@ -80,9 +65,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 top: mq.height * .36,
                 child: Text(
                   widget.user.email,
-                  style: const TextStyle(
-                    fontSize: 20,
-                  ),
+                  style: TextStyle(
+                      fontSize: 20, color: Theme.of(context).primaryColorDark),
                 )),
 
             //About Textform
@@ -92,15 +76,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
                   children: [
-                    const Text(
+                    Text(
                       "About: ",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 19,
+                          color: Theme.of(context).primaryColorDark),
                     ),
                     Text(widget.user.about,
-                        style: const TextStyle(
-                          fontSize: 19,
-                        ))
+                        style: TextStyle(
+                            fontSize: 19,
+                            color: Theme.of(context).primaryColorDark))
                   ],
                 ),
               ),
@@ -113,17 +99,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
                   children: [
-                    const Text(
+                    Text(
                       "Date Joined: ",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          color: Theme.of(context).primaryColorDark),
                     ),
                     Text(
                         MyDateUtility.getFormattedDateTime(
                             context: context, time: widget.user.createdAt),
-                        style: const TextStyle(
-                          fontSize: 17,
-                        ))
+                        style: TextStyle(
+                            fontSize: 17,
+                            color: Theme.of(context).primaryColorDark))
                   ],
                 ),
               ),

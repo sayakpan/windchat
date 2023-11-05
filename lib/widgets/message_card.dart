@@ -4,6 +4,7 @@ import 'package:windchat/api/api.dart';
 import 'package:windchat/helper/custom_chat_theme.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/messages.dart';
+import 'package:windchat/screens/auth/pref.dart';
 
 import '../helper/mydateutility.dart';
 
@@ -44,7 +45,8 @@ class _MessageCardState extends State<MessageCard> {
                       ? mq.width * .03
                       : mq.width * .02),
                   decoration: BoxDecoration(
-                      gradient: CustomTheme.customTheme('sender'),
+                      gradient: CustomTheme.customTheme(
+                          'sender', Pref.gradientIndexForMsg),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
@@ -82,9 +84,10 @@ class _MessageCardState extends State<MessageCard> {
               Padding(
                 padding: EdgeInsets.only(left: mq.width * .01),
                 child: Text(
-                  MyDateUtility.getFormattedTime(
+                  MyDateUtility.getMessageTime(
                       context: context, time: widget.message.sent),
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                  style: TextStyle(
+                      fontSize: 14, color: Theme.of(context).primaryColorDark),
                 ),
               ),
             ],
@@ -110,7 +113,8 @@ class _MessageCardState extends State<MessageCard> {
             Text(
               MyDateUtility.getFormattedTime(
                   context: context, time: widget.message.sent),
-              style: const TextStyle(fontSize: 14, color: Colors.black54),
+              style: TextStyle(
+                  fontSize: 14, color: Theme.of(context).primaryColorDark),
             )
           ]),
         ),
@@ -130,7 +134,8 @@ class _MessageCardState extends State<MessageCard> {
                       ? mq.width * .03
                       : mq.width * .02),
                   decoration: BoxDecoration(
-                      gradient: CustomTheme.customTheme('receiver'),
+                      gradient: CustomTheme.customTheme(
+                          'receiver', Pref.gradientIndexForMsg),
                       // border: Border.all(
                       //     color: const Color.fromARGB(255, 207, 207, 207)),
                       borderRadius: const BorderRadius.only(

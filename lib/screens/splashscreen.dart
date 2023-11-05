@@ -77,11 +77,11 @@ class _SplashScreenState extends State<SplashScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'Wind',
                   style: TextStyle(
                     fontSize: 30.0,
-                    color: Colors.black,
+                    color: Theme.of(context).primaryColorDark,
                   ),
                 ),
                 AnimatedTextKit(
@@ -113,9 +113,8 @@ class _SplashScreenState extends State<SplashScreen>
               animatedTexts: [
                 TyperAnimatedText(
                   'Made with ❤️',
-                  textStyle: const TextStyle(
-                    fontSize: 15,
-                  ),
+                  textStyle: TextStyle(
+                      fontSize: 15, color: Theme.of(context).primaryColorDark),
                   speed: const Duration(milliseconds: 70),
                 ),
               ],
