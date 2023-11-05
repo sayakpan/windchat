@@ -124,7 +124,7 @@ class _ChatScreenState extends State<ChatScreen> {
               width: double.infinity,
               height: double.infinity,
               decoration: BoxDecoration(
-                gradient: CustomTheme.customChatBGTheme(),
+                gradient: CustomTheme.customChatBGTheme("default", context),
               ),
               child: Column(
                 children: [

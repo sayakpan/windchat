@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,7 +6,7 @@ import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/screens/homescreen.dart';
 import 'package:windchat/screens/profilescreen.dart';
-
+import 'package:windchat/screens/settingsscreen.dart';
 import '../helper/dialogs.dart';
 import '../screens/auth/loginscreen.dart';
 
@@ -110,7 +109,10 @@ class _SideDrawerState extends State<SideDrawer> {
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
             onTap: () {
-              // Handle the action when Settings is tapped
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SettingsScreen(user: widget.user)));
             },
           ),
 

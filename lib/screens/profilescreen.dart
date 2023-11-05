@@ -40,7 +40,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   text: 'Profile',
                   style: TextStyle(
                     fontSize: 25,
-                    color: Colors.black,
                   ),
                 ),
               ],
@@ -99,9 +98,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   top: mq.height * .3,
                   child: Text(
                     widget.user.name,
-                    style: const TextStyle(
-                      fontSize: 30,
-                    ),
+                    style: TextStyle(
+                        fontSize: 30,
+                        color: Theme.of(context).primaryColorDark),
                   )),
 
               // Email
@@ -109,9 +108,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   top: mq.height * .36,
                   child: Text(
                     widget.user.email,
-                    style: const TextStyle(
-                      fontSize: 20,
-                    ),
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).primaryColorDark),
                   )),
 
               //About Textform
@@ -120,6 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: mq.height * .15,
                 width: mq.width * .7,
                 child: TextFormField(
+                  style: TextStyle(color: Theme.of(context).primaryColorDark),
                   initialValue: widget.user.about,
                   onSaved: (newValue) => API.ownuser.about = newValue!,
                   validator: (value) => value != null && value.isNotEmpty
@@ -161,9 +161,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                     },
                     icon: const Icon(Icons.edit),
-                    label: const Text(
+                    label: Text(
                       "Update",
-                      style: TextStyle(fontSize: 15),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Theme.of(context).primaryColorDark),
                     ),
                   ))
             ],

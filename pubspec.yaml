@@ -45,6 +45,14 @@ dependencies:
   # Text Animations
   animated_text_kit: ^4.2.2
   email_validator: ^2.1.17
+  # Setting Screen Design
+  babstrap_settings_screen: ^0.1.6
+  #Store data 
+  shared_preferences: ^2.0.12
+  hive: ^2.0.4
+  hive_flutter: ^1.1.0 
+  # GetX
+  get: ^4.6.6
 
   firebase_analytics: ^10.5.1
   path_provider: ^2.1.1

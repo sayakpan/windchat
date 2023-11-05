@@ -1,15 +1,17 @@
 import 'dart:developer';
-
 import 'package:fcm_channels_manager/fcm_channels_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:logger/logger.dart';
+import 'package:windchat/helper/custom_chat_theme.dart';
+import 'package:windchat/screens/auth/pref.dart';
 import 'package:windchat/screens/splashscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Pref.initializeHive();
   await _initializeFirebase();
   await _initializeNotificationChannel();
   runApp(const MyApp());
@@ -24,15 +26,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of my application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
         title: 'WindChat',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            textTheme: GoogleFonts.outfitTextTheme(),
-            colorScheme:
-                ColorScheme.fromSeed(seedColor: const Color(0xFF4B39EF)),
-            useMaterial3: true,
-            appBarTheme: const AppBarTheme(centerTitle: true)),
+
+        // Light and Dark Theme
+        themeMode: Pref.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        theme: CustomTheme.lighttheme,
+        darkTheme: CustomTheme.darkTheme,
         home: const SplashScreen());
   }
 }

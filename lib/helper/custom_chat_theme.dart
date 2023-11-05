@@ -1,4 +1,6 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CustomTheme {
   static LinearGradient defaultTheme(String type) {
@@ -60,14 +62,55 @@ class CustomTheme {
     );
   }
 
-  static LinearGradient customChatBGTheme() {
-    return const LinearGradient(
-      colors: [
-        Color.fromARGB(255, 255, 255, 255),
-        Color.fromARGB(255, 255, 255, 255),
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
+  static LinearGradient customChatBGTheme(String mode, BuildContext context) {
+    if (mode == "default") {
+      if (Get.isDarkMode) {
+        return const LinearGradient(
+          colors: [
+            Color.fromARGB(255, 48, 48, 48),
+            Color.fromARGB(255, 75, 75, 75),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        );
+      } else {
+        return const LinearGradient(
+          colors: [
+            Color.fromARGB(255, 255, 255, 255),
+            Color.fromARGB(255, 255, 255, 255),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+      }
+    } else {
+      return const LinearGradient(
+        colors: [
+          Color.fromARGB(255, 255, 255, 255),
+          Color.fromARGB(255, 255, 255, 255),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
+    }
   }
+
+//App themes
+  static ThemeData lighttheme = ThemeData(
+    appBarTheme: const AppBarTheme(centerTitle: true),
+    brightness: Brightness.light,
+    primaryColor: const Color(0xFF4B39EF),
+    primaryColorDark:
+        const Color.fromARGB(255, 0, 0, 0), //to be dybnamically changed
+    textTheme: GoogleFonts.outfitTextTheme(), useMaterial3: true,
+  );
+
+  static ThemeData darkTheme = ThemeData(
+    appBarTheme: const AppBarTheme(centerTitle: true),
+    brightness: Brightness.dark,
+    primaryColor: const Color(0xFF4B39EF),
+    primaryColorDark:
+        const Color.fromARGB(255, 255, 255, 255), //to be dybnamically changed
+    textTheme: GoogleFonts.outfitTextTheme(), useMaterial3: true,
+  );
 }

@@ -82,9 +82,10 @@ class _MessageCardState extends State<MessageCard> {
               Padding(
                 padding: EdgeInsets.only(left: mq.width * .01),
                 child: Text(
-                  MyDateUtility.getFormattedTime(
+                  MyDateUtility.getMessageTime(
                       context: context, time: widget.message.sent),
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                  style: TextStyle(
+                      fontSize: 14, color: Theme.of(context).primaryColorDark),
                 ),
               ),
             ],
@@ -110,7 +111,8 @@ class _MessageCardState extends State<MessageCard> {
             Text(
               MyDateUtility.getFormattedTime(
                   context: context, time: widget.message.sent),
-              style: const TextStyle(fontSize: 14, color: Colors.black54),
+              style: TextStyle(
+                  fontSize: 14, color: Theme.of(context).primaryColorDark),
             )
           ]),
         ),

@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> newrequestList = [];
   List<ChatUser> pendingrequestlist = [];
 
-  final _formkey_addcontact = GlobalKey<FormState>();
+  final _formkeyAddContact = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -70,7 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: 'Wind',
                 style: TextStyle(
                   fontSize: 25,
-                  color: Colors.black,
                 ),
               ),
               TextSpan(
@@ -267,16 +266,15 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Theme.of(context).primaryColor,
               size: 30,
             ),
-            const Text(
+            Text(
               "   Add New Contact",
               style: TextStyle(
-                fontSize: 20,
-              ),
+                  fontSize: 20, color: Theme.of(context).primaryColorDark),
             )
           ],
         ),
         content: Form(
-          key: _formkey_addcontact,
+          key: _formkeyAddContact,
           child: TextFormField(
             maxLines: null,
             onChanged: (value) => email = value.trim().toLowerCase(),
@@ -312,7 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 MaterialButton(
                   onPressed: () {
-                    if (_formkey_addcontact.currentState!.validate()) {
+                    if (_formkeyAddContact.currentState!.validate()) {
                       // Navigator.pop(context);
                       logger.i(email);
                       logger.e(API.validateEmail(email));
