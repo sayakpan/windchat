@@ -193,10 +193,12 @@ class _ChatScreenState extends State<ChatScreen> {
                           return MessageCard(message: reversedMessages[index]);
                         }));
                   } else {
-                    return const Center(
+                    return Center(
                         child: Text(
                       "Say 'Hello' 👋",
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Theme.of(context).primaryColorDark),
                     ));
                   }
               }
@@ -242,6 +244,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: 3,
+                  style: TextStyle(color: Theme.of(context).primaryColorDark),
                   decoration: const InputDecoration(
                     hintText: "type here...",
                     border: InputBorder.none,

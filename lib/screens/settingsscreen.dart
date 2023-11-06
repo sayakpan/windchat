@@ -23,15 +23,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  late bool isActive;
-
-  @override
-  void initState() {
-    WidgetsFlutterBinding.ensureInitialized();
-    super.initState();
-    isActive = widget.user.isOnline;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,15 +80,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   decoration: BoxDecoration(
-                    color: isActive ? Colors.green.shade500 : Colors.red,
+                    color: Pref.isOnlineEnabled
+                        ? Colors.green.shade500
+                        : Colors.red,
                     borderRadius: BorderRadius.circular(50.0),
                     border: Border.all(
-                      color: isActive ? Colors.green.shade500 : Colors.red,
+                      color: Pref.isOnlineEnabled
+                          ? Colors.green.shade500
+                          : Colors.red,
                       width: 1.0,
                     ),
                   ),
                   child: Text(
-                    isActive ? "Online" : "Offline",
+                    Pref.isOnlineEnabled ? "Online" : "Offline",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -181,13 +176,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitleStyle:
                       TextStyle(color: Theme.of(context).primaryColorDark),
                   trailing: Switch(
-                    value: isActive,
+                    value: Pref.isOnlineEnabled,
                     onChanged: (value) async {
                       setState(() {
-                        isActive = !isActive;
+                        Pref.isOnlineEnabled = !Pref.isOnlineEnabled;
                       });
-                      API.updateOnlineStatus(isActive);
-                      logger.e(isActive);
+                      API.updateOnlineStatus(Pref.isOnlineEnabled);
+                      logger.e(Pref.isOnlineEnabled);
                     },
                   ),
                 ),

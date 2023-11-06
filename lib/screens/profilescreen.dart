@@ -159,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Theme.of(context).primaryColorLight,
+                        foregroundColor: Colors.white,
                         minimumSize: Size(
                           mq.width * .3,
                           mq.height * .05,
@@ -176,11 +176,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                     },
                     icon: const Icon(Icons.edit),
-                    label: Text(
+                    label: const Text(
                       "Update",
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Theme.of(context).primaryColorLight),
+                      style: TextStyle(fontSize: 15, color: Colors.white),
                     ),
                   ))
             ],
