@@ -45,16 +45,18 @@ class _RequestChatUserCardState extends State<RequestChatUserCard> {
             ),
 
             // User Name
-            title: Text(widget.user.name),
+            title: Text(
+              widget.user.name,
+              style: const TextStyle(color: Colors.black),
+            ),
 
             // Subtitle
             subtitle: const Row(
               children: [
-                Text(
-                  "Wants to connect",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                )
+                Text("Wants to connect",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.black))
               ],
             ),
             trailing:
@@ -69,11 +71,12 @@ class _RequestChatUserCardState extends State<RequestChatUserCard> {
                         API.acceptOrRejectNewContact(widget.user, "rejected");
                       },
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
                         shape: const CircleBorder(),
                         minimumSize: const Size(32, 32),
                         side: BorderSide(color: Colors.red.shade400, width: 1),
                       ),
-                      child: Icon(Icons.close, color: Colors.red.shade400),
+                      child: const Icon(Icons.close, color: Colors.white),
                     ),
                   ),
                   Positioned(

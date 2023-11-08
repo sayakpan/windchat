@@ -12,7 +12,7 @@ class Pref {
   static bool get isDarkMode => _box.get('isDarkMode') ?? false;
   static set isDarkMode(bool value) => _box.put('isDarkMode', value);
 
-  static bool get isOnlineEnabled => _box.get('isOnlineEnabled') ?? false;
+  static bool get isOnlineEnabled => _box.get('isOnlineEnabled') ?? true;
   static set isOnlineEnabled(bool value) => _box.put('isOnlineEnabled', value);
 
   static int get gradientIndex => _box.get('gradientIndex') ?? 0;

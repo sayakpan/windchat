@@ -224,11 +224,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: mq.height * .35,
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 25, bottom: 20),
+                Padding(
+                  padding: const EdgeInsets.only(top: 25, bottom: 20),
                   child: Text(
                     "Upload Profile Image",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).primaryColorDark),
                   ),
                 ),
                 Row(
@@ -290,13 +292,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         )),
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(
+                Padding(
+                  padding: const EdgeInsets.only(
                     top: 35,
                   ),
                   child: Text(
                     "Don't worry, this will not change your gmail profile image.",
-                    style: TextStyle(fontSize: 13),
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).primaryColorDark),
                   ),
                 ),
               ],

@@ -158,6 +158,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           : CustomTheme.darkTheme);
                       Pref.isDarkMode = !Pref.isDarkMode;
                       logger.e("Dark Mode : ${!Get.isDarkMode}");
+                      setState(() {
+                        // Rebuild the widget tree
+                      });
                     },
                   ),
                 ),
