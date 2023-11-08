@@ -159,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Theme.of(context).primaryColorLight,
+                        foregroundColor: Colors.white,
                         minimumSize: Size(
                           mq.width * .3,
                           mq.height * .05,
@@ -176,11 +176,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                     },
                     icon: const Icon(Icons.edit),
-                    label: Text(
+                    label: const Text(
                       "Update",
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Theme.of(context).primaryColorLight),
+                      style: TextStyle(fontSize: 15, color: Colors.white),
                     ),
                   ))
             ],
@@ -226,11 +224,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: mq.height * .35,
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 25, bottom: 20),
+                Padding(
+                  padding: const EdgeInsets.only(top: 25, bottom: 20),
                   child: Text(
                     "Upload Profile Image",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).primaryColorDark),
                   ),
                 ),
                 Row(
@@ -292,13 +292,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         )),
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(
+                Padding(
+                  padding: const EdgeInsets.only(
                     top: 35,
                   ),
                   child: Text(
                     "Don't worry, this will not change your gmail profile image.",
-                    style: TextStyle(fontSize: 13),
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).primaryColorDark),
                   ),
                 ),
               ],

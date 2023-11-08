@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:windchat/api/api.dart';
 import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
+import 'package:windchat/screens/auth/pref.dart';
 import 'package:windchat/screens/profilescreen.dart';
 import 'package:windchat/widgets/chat_user_card.dart';
 import 'package:windchat/widgets/drawar_side.dart';
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         API.updateOnlineStatus(false);
       }
 
-      if (message.contains("resumed")) {
+      if (message.contains("resumed") && Pref.isOnlineEnabled == true) {
         API.updateOnlineStatus(true);
       }
 
@@ -225,11 +226,13 @@ class _HomeScreenState extends State<HomeScreen> {
               } else {
                 return Center(
                     child: Padding(
-                  padding: EdgeInsets.only(top: mq.height * .5),
-                  child: const Text(
+                  padding: EdgeInsets.only(top: mq.height * .2),
+                  child: Text(
                     "No chat buddies in sight?\nTime to add some friends here. 👋",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 17),
+                    style: TextStyle(
+                        fontSize: 17,
+                        color: Theme.of(context).primaryColorDark),
                   ),
                 ));
               }

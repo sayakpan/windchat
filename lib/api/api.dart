@@ -202,12 +202,10 @@ class API {
     final reference = firestore
         .collection('chats/${getConversationID(sendtoUser.id)}/messages');
 
-    await reference.doc(time).set(message.toJson()).then((value) => {
-          if (type == "text")
-            {sendPushNotification(sendtoUser, msg)}
-          else
-            {sendPushNotification(sendtoUser, "📸 Image")}
-        });
+    await reference
+        .doc(time)
+        .set(message.toJson())
+        .then((value) => {sendPushNotification(sendtoUser, msg, type)});
   }
 
   // Mark messages as Read when viewed - Set Read Value with Time
@@ -264,17 +262,25 @@ class API {
     });
   }
 
-  static Future<void> sendPushNotification(ChatUser toUser, String msg) async {
-    try {
+  static Map<String, Object> buildNotificationBody(
+      ChatUser toUser, String msg, String type) {
+    if (type == "image") {
+      return {
+        "to": toUser.pushToken,
+        "notification": {
+          "title": ownuser.name,
+          "body": "📸 Image",
+          "image": msg,
+          "android_channel_id": "chats"
+        },
+      };
+    } else {
       // Truncate msg if msg is too long
       if (msg.length > 100) {
         msg = msg.substring(0, 100);
         msg += '...';
       }
-
-      var serverkey =
-          "AAAAQOw8RD4:APA91bGGiZP9iQ6Vjt6092i0tTllJh3Z39Ny-kQV2Qbf6bheN3dZdTZJRm5lZ9bHScqcxs8qttbl2njmcCoL527AInpKlZlnd2jMFzE8LjrL-621ggOyu0beoRkbd22Ah1fIyaD3rv6p";
-      final body = {
+      return {
         "to": toUser.pushToken,
         "notification": {
           "title": ownuser.name,
@@ -282,6 +288,15 @@ class API {
           "android_channel_id": "chats"
         },
       };
+    }
+  }
+
+  static Future<void> sendPushNotification(
+      ChatUser toUser, String msg, String type) async {
+    try {
+      var serverkey =
+          "AAAAQOw8RD4:APA91bGGiZP9iQ6Vjt6092i0tTllJh3Z39Ny-kQV2Qbf6bheN3dZdTZJRm5lZ9bHScqcxs8qttbl2njmcCoL527AInpKlZlnd2jMFzE8LjrL-621ggOyu0beoRkbd22Ah1fIyaD3rv6p";
+      var body = buildNotificationBody(toUser, msg, type);
 
       var response = await post(
           Uri.parse('https://fcm.googleapis.com/fcm/send'),
