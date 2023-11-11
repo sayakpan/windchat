@@ -6,6 +6,7 @@ import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/screens/auth/pref.dart';
 import 'package:windchat/screens/profilescreen.dart';
+import 'package:windchat/screens/searchscreen.dart';
 import 'package:windchat/widgets/chat_user_card.dart';
 import 'package:windchat/widgets/drawar_side.dart';
 import 'package:windchat/widgets/request_chat_user_card.dart';
@@ -86,12 +87,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
+          // Search Button
           IconButton(
-            icon: const Icon(CupertinoIcons.search), // Profile Button
-            onPressed: () {},
+            icon: const Icon(CupertinoIcons.search),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SearchScreen(user: API.ownuser)));
+            },
           ),
+
+          // Profile Button
           IconButton(
-            icon: const Icon(Icons.person), // Profile Button
+            icon: const Icon(Icons.person),
             onPressed: () {
               Navigator.push(
                   context,

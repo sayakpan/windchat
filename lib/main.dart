@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
 
         // Light and Dark Theme
         themeMode: Pref.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        theme: CustomTheme.lighttheme,
+        theme: Pref.isDarkMode ? CustomTheme.darkTheme : CustomTheme.lighttheme,
         darkTheme: CustomTheme.darkTheme,
         home: const SplashScreen());
   }
