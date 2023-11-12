@@ -7,7 +7,7 @@ import 'package:windchat/helper/mydateutility.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/messages.dart';
 import 'package:windchat/screens/auth/pref.dart';
-import 'package:windchat/screens/userprofilescreen.dart';
+import 'package:windchat/screens/contactprofilescreen.dart';
 import 'package:windchat/widgets/message_card.dart';
 import '../api/api.dart';
 import '../models/chat_user.dart';
@@ -49,7 +49,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         context,
                         MaterialPageRoute(
                             builder: ((context) =>
-                                UserProfileScreen(user: widget.user))));
+                                ContactProfileScreen(user: widget.user))));
                   },
                   child: StreamBuilder(
                     stream: API.getChatUserInfo(widget.user),

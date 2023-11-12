@@ -117,6 +117,49 @@ class API {
     }
   }
 
+  // Get connection status
+  static Future<String> getConnectionStatus(ChatUser checkuser) async {
+    var checkuserdata = await firestore
+        .collection('users')
+        .where('email', isEqualTo: checkuser.email)
+        .get();
+
+    var existingContact = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection("contacts")
+        .doc(checkuserdata.docs.first.id)
+        .get();
+
+    if (existingContact.exists) {
+      return existingContact['status'];
+    } else {
+      return "nocontact";
+    }
+  }
+
+  // Remove Contact
+  static Future<void> removeContact(ChatUser otheruser) async {
+    var otheruserdata = await firestore
+        .collection('users')
+        .where('email', isEqualTo: otheruser.email)
+        .get();
+
+    await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection("contacts")
+        .doc(otheruserdata.docs.first.id)
+        .delete();
+
+    await firestore
+        .collection('users')
+        .doc(otheruserdata.docs.first.id)
+        .collection("contacts")
+        .doc(user.uid)
+        .delete();
+  }
+
   // Accept a Friend User
   static Future<void> acceptOrRejectNewContact(
       ChatUser requestedUser, String status) async {
