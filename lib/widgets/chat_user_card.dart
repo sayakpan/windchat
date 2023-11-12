@@ -4,7 +4,7 @@ import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/models/messages.dart';
 import 'package:windchat/screens/chatscreen.dart';
-import 'package:windchat/screens/userprofilescreen.dart';
+import 'package:windchat/widgets/profile_dialog.dart';
 
 import '../api/api.dart';
 import '../helper/unread_counter.dart';
@@ -21,8 +21,6 @@ class ChatUserCard extends StatefulWidget {
 class _ChatUserCardState extends State<ChatUserCard> {
   // To Store the last message - can be null
   Messages? _message;
-
-  // get all messages
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +52,9 @@ class _ChatUserCardState extends State<ChatUserCard> {
                   // Profile image
                   leading: InkWell(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserProfileScreen(
-                                    user: widget.user,
-                                  )));
+                      showDialog(
+                          context: context,
+                          builder: (_) => ProfileDialog(user: widget.user));
                     },
                     child: CircleAvatar(
                       radius: 25.0,

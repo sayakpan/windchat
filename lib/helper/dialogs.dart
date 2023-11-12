@@ -10,6 +10,7 @@ class Dialogs {
       ),
       backgroundColor: color,
       behavior: SnackBarBehavior.floating,
+      duration: const Duration(seconds: 2),
     ));
   }
 

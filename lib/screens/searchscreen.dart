@@ -26,9 +26,13 @@ class _SearchScreenState extends State<SearchScreen> {
         title: TextField(
           onChanged: (value) {
             if (value.isNotEmpty) {
-              isSearching = true;
+              setState(() {
+                isSearching = true;
+              });
             } else {
-              isSearching = false;
+              setState(() {
+                isSearching = false;
+              });
             }
             searchList.clear();
             for (var user in usersNotInContact) {
@@ -39,6 +43,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   searchList;
                 });
               }
+            }
+            logger.e(isSearching);
+            for (var element in searchList) {
+              logger.e(element.name);
             }
           },
           controller: _searchController,
