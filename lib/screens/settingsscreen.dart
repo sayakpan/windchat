@@ -220,6 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SettingsItem(
                   onTap: () async {
                     Dialogs.showProgressBar(context);
+                    await API.updateOnlineStatus(false);
                     await FirebaseAuth.instance.signOut().then((value) async {
                       await GoogleSignIn().signOut().then((value) {
                         // To pop the dialog
@@ -239,7 +240,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: "Sign Out",
                 ),
                 SettingsItem(
-                  onTap: () {},
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text(
+                            'Delete Account ?',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          content: Text(
+                            'Deleting account is permanent and will delete all your chats and data.',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColorDark),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Cancel'),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Delete'),
+                              child: const Text('Delete',
+                                  style: TextStyle(color: Colors.red)),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                   icons: CupertinoIcons.delete_solid,
                   title: "Delete account",
                   subtitle: "All your chats will be deleted",

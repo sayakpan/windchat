@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:windchat/api/api.dart';
+import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/helper/mydateutility.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
@@ -35,17 +36,22 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
             //Profile Picture and Edit Button
             Positioned(
               top: mq.height * .05,
-              child: CircleAvatar(
-                radius: 95.0,
-                backgroundImage: NetworkImage(widget.user.image),
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.white,
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 225, 225, 225),
-                      width: 1.0,
+              child: InkWell(
+                onTap: () {
+                  Dialogs.showImageDialog(context, widget.user.image);
+                },
+                child: CircleAvatar(
+                  radius: 95.0,
+                  backgroundImage: NetworkImage(widget.user.image),
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Colors.white,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color.fromARGB(255, 225, 225, 225),
+                        width: 1.0,
+                      ),
                     ),
                   ),
                 ),
@@ -93,11 +99,12 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
               ),
             ),
 
-            // Update Button
+            // Remove Contact Button
             Positioned(
                 top: mq.height * .50,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
+                    elevation: 3,
                     minimumSize: Size(
                       mq.width * .3,
                       mq.height * .05,
@@ -114,7 +121,7 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
                       color: Colors.red),
                   label: const Text(
                     "Remove Contact",
-                    style: TextStyle(fontSize: 15, color: Colors.red),
+                    style: TextStyle(fontSize: 16, color: Colors.red),
                   ),
                   onPressed: () {
                     API.acceptOrRejectNewContact(widget.user, "rejected");

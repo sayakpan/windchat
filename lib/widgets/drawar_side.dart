@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:windchat/api/api.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/screens/homescreen.dart';
@@ -27,8 +28,11 @@ class _SideDrawerState extends State<SideDrawer> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration:
-                const BoxDecoration(color: Color.fromARGB(255, 90, 72, 255)),
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Color(0xff0043ba), Color(0xff006df1)])),
             child: Row(children: [
               CircleAvatar(
                 radius: 50.0,
@@ -122,6 +126,7 @@ class _SideDrawerState extends State<SideDrawer> {
             title: const Text('Logout'),
             onTap: () async {
               Dialogs.showProgressBar(context);
+              await API.updateOnlineStatus(false);
               await FirebaseAuth.instance.signOut().then((value) async {
                 await GoogleSignIn().signOut().then((value) {
                   // To pop the dialog

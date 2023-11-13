@@ -36,20 +36,22 @@ class _HomeScreenState extends State<HomeScreen> {
     API.updateOnlineStatus(true);
     SystemChannels.lifecycle.setMessageHandler((message) {
       logger.w("SystemChannels lifecycle : $message");
-      if (message!.contains("paused")) {
-        API.updateOnlineStatus(false);
-      }
+      if (API.auth.currentUser != null) {
+        if (message!.contains("paused")) {
+          API.updateOnlineStatus(false);
+        }
 
-      if (message.contains("resumed") && Pref.isOnlineEnabled == true) {
-        API.updateOnlineStatus(true);
-      }
+        if (message.contains("resumed") && Pref.isOnlineEnabled == true) {
+          API.updateOnlineStatus(true);
+        }
 
-      if (message.contains("inactive")) {
-        API.updateOnlineStatus(false);
-      }
+        if (message.contains("inactive")) {
+          API.updateOnlineStatus(false);
+        }
 
-      if (message.contains("detached")) {
-        API.updateOnlineStatus(false);
+        if (message.contains("detached")) {
+          API.updateOnlineStatus(false);
+        }
       }
 
       return Future.value(message);
@@ -289,6 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
         content: Form(
           key: _formkeyAddContact,
           child: TextFormField(
+            style: TextStyle(color: Theme.of(context).primaryColorDark),
             maxLines: null,
             onChanged: (value) => email = value.trim().toLowerCase(),
             validator: (value) => value != null && value.isNotEmpty
