@@ -52,131 +52,6 @@ class API {
         .snapshots();
   }
 
-  // Get My Contacts only from Firebase
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyContactUsers() {
-    return firestore
-        .collection("users")
-        .doc(user.uid)
-        .collection("contacts")
-        .where("status",
-            whereNotIn: ["requested", "rejected", "newrequest"]).snapshots();
-  }
-
-  // Get My Contacts only from Firebase
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getPendingRequestUsers() {
-    return firestore
-        .collection("users")
-        .doc(user.uid)
-        .collection("contacts")
-        .where("status", whereIn: ["newrequest"]).snapshots();
-  }
-
-  // Add Friend User
-  static Future<String> addNewContact(String email) async {
-    // trim email for space and small letters
-    email = email.trim().toLowerCase();
-
-    var userdata = await firestore
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-
-    var existingContact = await firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection("contacts")
-        .doc(userdata.docs.first.id)
-        .get();
-
-    if (existingContact.exists) {
-      if (existingContact['status'] == "requested") {
-        return "requested";
-      } else if (existingContact['status'] == "newrequest") {
-        return "newrequest";
-      } else {
-        return "existing";
-      }
-    } else {
-      if (userdata.docs.isNotEmpty && userdata.docs.first.id != user.uid) {
-        firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection("contacts")
-            .doc(userdata.docs.first.id)
-            .set({"email": email, "status": "requested"});
-        firestore
-            .collection('users')
-            .doc(userdata.docs.first.id)
-            .collection("contacts")
-            .doc(user.uid)
-            .set({"email": user.email, "status": "newrequest"});
-        return "added";
-      } else {
-        return "nouser";
-      }
-    }
-  }
-
-  // Get connection status
-  static Future<String> getConnectionStatus(ChatUser checkuser) async {
-    var checkuserdata = await firestore
-        .collection('users')
-        .where('email', isEqualTo: checkuser.email)
-        .get();
-
-    var existingContact = await firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection("contacts")
-        .doc(checkuserdata.docs.first.id)
-        .get();
-
-    if (existingContact.exists) {
-      return existingContact['status'];
-    } else {
-      return "nocontact";
-    }
-  }
-
-  // Remove Contact
-  static Future<void> removeContact(ChatUser otheruser) async {
-    var otheruserdata = await firestore
-        .collection('users')
-        .where('email', isEqualTo: otheruser.email)
-        .get();
-
-    await firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection("contacts")
-        .doc(otheruserdata.docs.first.id)
-        .delete();
-
-    await firestore
-        .collection('users')
-        .doc(otheruserdata.docs.first.id)
-        .collection("contacts")
-        .doc(user.uid)
-        .delete();
-  }
-
-  // Accept a Friend User
-  static Future<void> acceptOrRejectNewContact(
-      ChatUser requestedUser, String status) async {
-    firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection("contacts")
-        .doc(requestedUser.id)
-        .update({"status": status});
-    firestore
-        .collection('users')
-        .doc(requestedUser.id)
-        .collection("contacts")
-        .doc(user.uid)
-        .update({"status": status});
-  }
-
   // Check existing User
   static Future<bool> userExists() async {
     var documentSnapshot =
@@ -392,6 +267,163 @@ class API {
 
     final imageURL = await reference.getDownloadURL();
     await sendMessage(toUser, imageURL, "image");
+  }
+
+  //************************* Contact Managing *****************************
+
+  // Get My Contacts only from Firebase
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyContactUsers() {
+    return firestore
+        .collection("users")
+        .doc(user.uid)
+        .collection("contacts")
+        .where("status",
+            whereNotIn: ["requested", "rejected", "newrequest"]).snapshots();
+  }
+
+  // Get My Contacts only from Firebase
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getPendingRequestUsers() {
+    return firestore
+        .collection("users")
+        .doc(user.uid)
+        .collection("contacts")
+        .where("status", whereIn: ["newrequest"]).snapshots();
+  }
+
+  // Add Friend User
+  static Future<String> addNewContact(String email) async {
+    // trim email for space and small letters
+    email = email.trim().toLowerCase();
+
+    var userdata = await firestore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+
+    var existingContact = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection("contacts")
+        .doc(userdata.docs.first.id)
+        .get();
+
+    if (existingContact.exists && existingContact['status'] != "rejected") {
+      if (existingContact['status'] == "requested") {
+        return "requested";
+      } else if (existingContact['status'] == "newrequest") {
+        return "newrequest";
+      } else {
+        return "existing";
+      }
+    } else {
+      if (userdata.docs.isNotEmpty && userdata.docs.first.id != user.uid) {
+        firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection("contacts")
+            .doc(userdata.docs.first.id)
+            .set({"email": email, "status": "requested"});
+        firestore
+            .collection('users')
+            .doc(userdata.docs.first.id)
+            .collection("contacts")
+            .doc(user.uid)
+            .set({"email": user.email, "status": "newrequest"});
+
+        ChatUser touser = ChatUser.fromJson(userdata.docs.first.data());
+        sendConnectionRequestNotification(touser);
+        return "added";
+      } else {
+        return "nouser";
+      }
+    }
+  }
+
+  // Get connection status
+  static Future<String> getConnectionStatus(ChatUser checkuser) async {
+    var checkuserdata = await firestore
+        .collection('users')
+        .where('email', isEqualTo: checkuser.email)
+        .get();
+
+    var existingContact = await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection("contacts")
+        .doc(checkuserdata.docs.first.id)
+        .get();
+
+    if (existingContact.exists) {
+      return existingContact['status'];
+    } else {
+      return "nocontact";
+    }
+  }
+
+  // Remove Contact
+  static Future<void> removeContact(ChatUser otheruser) async {
+    var otheruserdata = await firestore
+        .collection('users')
+        .where('email', isEqualTo: otheruser.email)
+        .get();
+
+    await firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection("contacts")
+        .doc(otheruserdata.docs.first.id)
+        .delete();
+
+    await firestore
+        .collection('users')
+        .doc(otheruserdata.docs.first.id)
+        .collection("contacts")
+        .doc(user.uid)
+        .delete();
+  }
+
+  // Accept a Friend User
+  static Future<void> acceptOrRejectNewContact(
+      ChatUser requestedUser, String status) async {
+    firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection("contacts")
+        .doc(requestedUser.id)
+        .update({"status": status});
+    firestore
+        .collection('users')
+        .doc(requestedUser.id)
+        .collection("contacts")
+        .doc(user.uid)
+        .update({"status": status});
+  }
+
+  static Future<void> sendConnectionRequestNotification(ChatUser toUser) async {
+    try {
+      var serverkey =
+          "AAAAQOw8RD4:APA91bGGiZP9iQ6Vjt6092i0tTllJh3Z39Ny-kQV2Qbf6bheN3dZdTZJRm5lZ9bHScqcxs8qttbl2njmcCoL527AInpKlZlnd2jMFzE8LjrL-621ggOyu0beoRkbd22Ah1fIyaD3rv6p";
+      var body = {
+        "to": toUser.pushToken,
+        "notification": {
+          "title": "${ownuser.name} wants to connect",
+          "body": "open app to see the full profile",
+          "android_channel_id": "chats"
+        },
+      };
+
+      var response = await post(
+          Uri.parse('https://fcm.googleapis.com/fcm/send'),
+          body: jsonEncode(body),
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "key=$serverkey"
+          });
+      log('sendPushNotification : Response status: ${response.statusCode}');
+      log('sendPushNotification : Response body: ${response.body}');
+    } catch (e) {
+      log('sendPushNotification : ERROR - $e');
+    }
   }
 
   //************************* Some Other Useful Methods *************************

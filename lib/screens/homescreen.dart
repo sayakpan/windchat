@@ -289,6 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
         content: Form(
           key: _formkeyAddContact,
           child: TextFormField(
+            style: TextStyle(color: Theme.of(context).primaryColorDark),
             maxLines: null,
             onChanged: (value) => email = value.trim().toLowerCase(),
             validator: (value) => value != null && value.isNotEmpty
