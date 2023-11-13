@@ -33,12 +33,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Scaffold From here
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color(0xff006df1),
           // toolbarHeight: mq.height * .09,
           title: RichText(
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: 'Profile',
+                  text: '',
                   style: TextStyle(
                     fontSize: 25,
                     color: Theme.of(context).primaryColorDark,
@@ -48,14 +49,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back), // Hamburger menu icon
+            icon: const Icon(Icons.arrow_back,
+                color: Colors.white), // Hamburger menu icon
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.settings), // Hamburger menu icon
+              icon: const Icon(
+                Icons.settings,
+                color: Colors.white,
+              ), // Hamburger menu icon
               onPressed: () {
                 Navigator.push(
                     context,
@@ -71,24 +76,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Stack(
             alignment: Alignment.center,
             children: [
+              Positioned(
+                  child: Container(
+                margin: EdgeInsets.only(bottom: mq.height * .72),
+                decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Color(0xff0043ba), Color(0xff006df1)]),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(50),
+                      bottomRight: Radius.circular(50),
+                    )),
+              )),
               //Profile Picture and Edit Button
               Positioned(
                 top: mq.height * .05,
                 child: Stack(
                   children: [
-                    CircleAvatar(
-                      radius: 95.0,
-                      backgroundImage: NetworkImage(widget.user.image),
-                      backgroundColor: Colors.transparent,
-                      foregroundColor: Colors.white,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color.fromARGB(255, 225, 225, 225),
-                            width: 1.0,
-                          ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color.fromARGB(255, 225, 225, 225),
+                          width: 2.0,
                         ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            offset: const Offset(2, 3),
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 100.0,
+                        backgroundImage: NetworkImage(widget.user.image),
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.white,
                       ),
                     ),
                     Positioned(
@@ -110,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               // Name
               Positioned(
-                  top: mq.height * .3,
+                  top: mq.height * .31,
                   child: Text(
                     widget.user.name,
                     style: TextStyle(
@@ -120,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               // Email
               Positioned(
-                  top: mq.height * .36,
+                  top: mq.height * .38,
                   child: Text(
                     widget.user.email,
                     style: TextStyle(
@@ -130,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               //About Textform
               Positioned(
-                top: mq.height * .43,
+                top: mq.height * .45,
                 height: mq.height * .15,
                 width: mq.width * .7,
                 child: TextFormField(
@@ -155,9 +181,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               // Update Button
               Positioned(
-                  top: mq.height * .53,
+                  top: mq.height * .55,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
                         backgroundColor: Theme.of(context).primaryColor,
                         foregroundColor: Colors.white,
                         minimumSize: Size(
@@ -189,6 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             Dialogs.showProgressBar(context);
+            await API.updateOnlineStatus(false);
             await FirebaseAuth.instance.signOut().then((value) async {
               await GoogleSignIn().signOut().then((value) {
                 // To pop the dialog

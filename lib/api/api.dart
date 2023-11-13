@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:windchat/api/notification_api.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/models/messages.dart';
@@ -31,7 +31,7 @@ class API {
   static Future<void> getOwnUser() async {
     await firestore.collection("users").doc(user.uid).get().then((value) {
       ownuser = ChatUser.fromJson(value.data()!);
-      getPushToken();
+      NotificationAPI.getPushToken();
     });
   }
 
@@ -120,10 +120,8 @@ class API {
     final reference = firestore
         .collection('chats/${getConversationID(sendtoUser.id)}/messages');
 
-    await reference
-        .doc(time)
-        .set(message.toJson())
-        .then((value) => {sendPushNotification(sendtoUser, msg, type)});
+    await reference.doc(time).set(message.toJson()).then((value) =>
+        {NotificationAPI.sendPushNotification(sendtoUser, msg, type)});
   }
 
   // Mark messages as Read when viewed - Set Read Value with Time
@@ -161,72 +159,15 @@ class API {
     });
   }
 
-  //*************************  Push Notification  *************************
+  // Delete messages
+  static Future<void> deleteMessage(Messages message) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toID)}/messages/')
+        .doc(message.sent)
+        .delete();
 
-  static FirebaseMessaging firemsg = FirebaseMessaging.instance;
-
-  static Future<void> getPushToken() async {
-    await firemsg.requestPermission();
-
-    firemsg.getToken().then((token) async {
-      if (token != null) {
-        ownuser.pushToken = token;
-        await firestore
-            .collection('users')
-            .doc(user.uid)
-            .update({"push_token": ownuser.pushToken});
-        log("getPushToken() : PushToken - ${ownuser.pushToken}");
-      }
-    });
-  }
-
-  static Map<String, Object> buildNotificationBody(
-      ChatUser toUser, String msg, String type) {
-    if (type == "image") {
-      return {
-        "to": toUser.pushToken,
-        "notification": {
-          "title": ownuser.name,
-          "body": "📸 Image",
-          "image": msg,
-          "android_channel_id": "chats"
-        },
-      };
-    } else {
-      // Truncate msg if msg is too long
-      if (msg.length > 100) {
-        msg = msg.substring(0, 100);
-        msg += '...';
-      }
-      return {
-        "to": toUser.pushToken,
-        "notification": {
-          "title": ownuser.name,
-          "body": msg,
-          "android_channel_id": "chats"
-        },
-      };
-    }
-  }
-
-  static Future<void> sendPushNotification(
-      ChatUser toUser, String msg, String type) async {
-    try {
-      var serverkey =
-          "AAAAQOw8RD4:APA91bGGiZP9iQ6Vjt6092i0tTllJh3Z39Ny-kQV2Qbf6bheN3dZdTZJRm5lZ9bHScqcxs8qttbl2njmcCoL527AInpKlZlnd2jMFzE8LjrL-621ggOyu0beoRkbd22Ah1fIyaD3rv6p";
-      var body = buildNotificationBody(toUser, msg, type);
-
-      var response = await post(
-          Uri.parse('https://fcm.googleapis.com/fcm/send'),
-          body: jsonEncode(body),
-          headers: {
-            HttpHeaders.contentTypeHeader: "application/json",
-            HttpHeaders.authorizationHeader: "key=$serverkey"
-          });
-      log('sendPushNotification : Response status: ${response.statusCode}');
-      log('sendPushNotification : Response body: ${response.body}');
-    } catch (e) {
-      log('sendPushNotification : ERROR - $e');
+    if (message.type == "image") {
+      await storage.refFromURL(message.msg).delete();
     }
   }
 
