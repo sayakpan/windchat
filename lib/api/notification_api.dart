@@ -75,4 +75,59 @@ class NotificationAPI {
       log('sendPushNotification : ERROR - $e');
     }
   }
+
+  static Future<void> sendConnectionRequestNotification(ChatUser toUser) async {
+    try {
+      var serverkey =
+          "AAAAQOw8RD4:APA91bGGiZP9iQ6Vjt6092i0tTllJh3Z39Ny-kQV2Qbf6bheN3dZdTZJRm5lZ9bHScqcxs8qttbl2njmcCoL527AInpKlZlnd2jMFzE8LjrL-621ggOyu0beoRkbd22Ah1fIyaD3rv6p";
+      var body = {
+        "to": toUser.pushToken,
+        "notification": {
+          "title": "${API.ownuser.name} wants to connect",
+          "body": "Tap to see the full profile",
+          "android_channel_id": "contact"
+        },
+      };
+
+      var response = await post(
+          Uri.parse('https://fcm.googleapis.com/fcm/send'),
+          body: jsonEncode(body),
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "key=$serverkey"
+          });
+      log('sendPushNotification : Response status: ${response.statusCode}');
+      log('sendPushNotification : Response body: ${response.body}');
+    } catch (e) {
+      log('sendPushNotification : ERROR - $e');
+    }
+  }
+
+  static Future<void> acceptedConnectionRequestNotification(
+      ChatUser toUser) async {
+    try {
+      var serverkey =
+          "AAAAQOw8RD4:APA91bGGiZP9iQ6Vjt6092i0tTllJh3Z39Ny-kQV2Qbf6bheN3dZdTZJRm5lZ9bHScqcxs8qttbl2njmcCoL527AInpKlZlnd2jMFzE8LjrL-621ggOyu0beoRkbd22Ah1fIyaD3rv6p";
+      var body = {
+        "to": toUser.pushToken,
+        "notification": {
+          "title": API.ownuser.name,
+          "body": "accepted your connection request",
+          "android_channel_id": "contact"
+        },
+      };
+
+      var response = await post(
+          Uri.parse('https://fcm.googleapis.com/fcm/send'),
+          body: jsonEncode(body),
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "key=$serverkey"
+          });
+      log('sendPushNotification : Response status: ${response.statusCode}');
+      log('sendPushNotification : Response body: ${response.body}');
+    } catch (e) {
+      log('sendPushNotification : ERROR - $e');
+    }
+  }
 }

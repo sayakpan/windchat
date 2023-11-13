@@ -99,11 +99,12 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
               ),
             ),
 
-            // Update Button
+            // Remove Contact Button
             Positioned(
                 top: mq.height * .50,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
+                    elevation: 3,
                     minimumSize: Size(
                       mq.width * .3,
                       mq.height * .05,
@@ -120,7 +121,7 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
                       color: Colors.red),
                   label: const Text(
                     "Remove Contact",
-                    style: TextStyle(fontSize: 15, color: Colors.red),
+                    style: TextStyle(fontSize: 16, color: Colors.red),
                   ),
                   onPressed: () {
                     API.acceptOrRejectNewContact(widget.user, "rejected");

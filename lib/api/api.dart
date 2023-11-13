@@ -1,8 +1,5 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:email_validator/email_validator.dart';
-import 'package:http/http.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -272,7 +269,7 @@ class API {
             .set({"email": user.email, "status": "newrequest"});
 
         ChatUser touser = ChatUser.fromJson(userdata.docs.first.data());
-        sendConnectionRequestNotification(touser);
+        NotificationAPI.sendConnectionRequestNotification(touser);
         return "added";
       } else {
         return "nouser";
@@ -338,33 +335,6 @@ class API {
         .collection("contacts")
         .doc(user.uid)
         .update({"status": status});
-  }
-
-  static Future<void> sendConnectionRequestNotification(ChatUser toUser) async {
-    try {
-      var serverkey =
-          "AAAAQOw8RD4:APA91bGGiZP9iQ6Vjt6092i0tTllJh3Z39Ny-kQV2Qbf6bheN3dZdTZJRm5lZ9bHScqcxs8qttbl2njmcCoL527AInpKlZlnd2jMFzE8LjrL-621ggOyu0beoRkbd22Ah1fIyaD3rv6p";
-      var body = {
-        "to": toUser.pushToken,
-        "notification": {
-          "title": "${ownuser.name} wants to connect",
-          "body": "open app to see the full profile",
-          "android_channel_id": "chats"
-        },
-      };
-
-      var response = await post(
-          Uri.parse('https://fcm.googleapis.com/fcm/send'),
-          body: jsonEncode(body),
-          headers: {
-            HttpHeaders.contentTypeHeader: "application/json",
-            HttpHeaders.authorizationHeader: "key=$serverkey"
-          });
-      log('sendPushNotification : Response status: ${response.statusCode}');
-      log('sendPushNotification : Response body: ${response.body}');
-    } catch (e) {
-      log('sendPushNotification : ERROR - $e');
-    }
   }
 
   //************************* Some Other Useful Methods *************************

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:windchat/api/api.dart';
+import 'package:windchat/api/notification_api.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
 import 'package:windchat/screens/userprofilescreen.dart';
@@ -83,7 +84,12 @@ class _RequestChatUserCardState extends State<RequestChatUserCard> {
                     left: mq.width * .13,
                     child: ElevatedButton(
                       onPressed: () {
-                        API.acceptOrRejectNewContact(widget.user, "approved");
+                        API
+                            .acceptOrRejectNewContact(widget.user, "approved")
+                            .then((value) {
+                          NotificationAPI.acceptedConnectionRequestNotification(
+                              widget.user);
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
