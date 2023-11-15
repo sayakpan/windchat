@@ -69,32 +69,48 @@ class _LoginScreenState extends State<LoginScreen> {
         alignment: Alignment.center,
         children: [
           Positioned(
-            top: mq.height * .25,
-            width: 400,
-            child: Image.asset("assets/images/welcome.png"),
+            top: 0,
+            width: 500,
+            child: Image.asset("assets/images/d3.png"),
           ),
           Positioned(
-              top: mq.height * .6,
-              width: mq.width * .6,
-              left: mq.width * .20,
+            top: mq.height * .6,
+            child: Image.asset(
+              "assets/images/google.png",
+              height: mq.height * .08,
+            ),
+          ),
+          Positioned(
+              top: mq.height * .72,
+              width: mq.width * .7,
               height: mq.height * .06,
-              child: ElevatedButton.icon(
+              child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    elevation: 2,
-                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    elevation: 0,
+                    backgroundColor: const Color(0xFF4B39EF),
                     side: const BorderSide(color: Color(0xFF4B39EF)),
                   ),
                   onPressed: () {
                     _handleGoogleButtonClick();
                   },
-                  icon: Image.asset(
-                    "assets/images/google.png",
-                    height: mq.height * .04,
-                  ),
-                  label: const Text(
+                  child: const Text(
                     "Login with Google",
-                    style: TextStyle(color: Color(0xFF4B39EF), fontSize: 16),
-                  )))
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold),
+                  ))),
+          Positioned(
+              bottom: mq.height * .05,
+              child: Text(
+                "Share your smile with this world and find friends",
+                style: TextStyle(
+                  color: Theme.of(context).primaryColorDark,
+                  fontSize: 16,
+                ),
+              )),
         ],
       ),
     );

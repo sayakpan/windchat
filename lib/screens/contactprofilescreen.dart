@@ -4,6 +4,7 @@ import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/helper/mydateutility.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
+import 'package:windchat/screens/homescreen.dart';
 
 class ContactProfileScreen extends StatefulWidget {
   final ChatUser user;
@@ -125,7 +126,11 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
                   ),
                   onPressed: () {
                     API.acceptOrRejectNewContact(widget.user, "rejected");
-                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ));
                   },
                 )),
 

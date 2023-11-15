@@ -39,20 +39,51 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 onTap: () {
                   Dialogs.showImageDialog(context, widget.user.image);
                 },
-                child: CircleAvatar(
-                  radius: 95.0,
-                  backgroundImage: NetworkImage(widget.user.image),
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: Colors.white,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color.fromARGB(255, 225, 225, 225),
-                        width: 1.0,
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 95.0,
+                      backgroundImage: NetworkImage(widget.user.image),
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 225, 225, 225),
+                            width: 1.0,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Positioned(
+                      top: 3,
+                      right: 7,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 2),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            strokeAlign: BorderSide.strokeAlignOutside,
+                            color: Colors.white,
+                            width: 4.0,
+                          ),
+                          color: widget.user.isOnline
+                              ? Colors.green.shade500
+                              : Colors.red,
+                          borderRadius: BorderRadius.circular(50.0),
+                        ),
+                        child: Text(
+                          widget.user.isOnline ? "Online" : "Offline",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),

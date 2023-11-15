@@ -32,17 +32,36 @@ class _AddChatUserCardState extends State<AddChatUserCard> {
                             user: widget.user,
                           )));
             },
-            child: CircleAvatar(
-              radius: 25.0,
-              child: ClipOval(
-                child: Image.network(
-                  widget.user.image,
-                  fit: BoxFit.cover,
-                  width: 100,
-                  height: 100,
+            child: Stack(children: [
+              CircleAvatar(
+                radius: 25.0,
+                child: ClipOval(
+                  child: Image.network(
+                    widget.user.image,
+                    fit: BoxFit.cover,
+                    width: 100,
+                    height: 100,
+                  ),
                 ),
               ),
-            ),
+              if (widget.user.isOnline)
+                Positioned(
+                  top: 3,
+                  right: 3,
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          strokeAlign: BorderSide.strokeAlignOutside,
+                          color: const Color.fromARGB(255, 240, 240, 240),
+                          width: 3.0,
+                        ),
+                        color: Colors.greenAccent.shade700,
+                        borderRadius: BorderRadius.circular(50)),
+                  ),
+                )
+            ]),
           ),
 
           // User Name

@@ -85,7 +85,7 @@ class NotificationAPI {
         "notification": {
           "title": "${API.ownuser.name} wants to connect",
           "body": "Tap to see the full profile",
-          "android_channel_id": "contact"
+          "android_channel_id": "chats"
         },
       };
 
@@ -113,7 +113,7 @@ class NotificationAPI {
         "notification": {
           "title": API.ownuser.name,
           "body": "accepted your connection request",
-          "android_channel_id": "contact"
+          "android_channel_id": "chats"
         },
       };
 

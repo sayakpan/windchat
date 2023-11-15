@@ -3,7 +3,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:windchat/main.dart';
-import 'package:windchat/screens/auth/loginscreen.dart';
+import 'package:windchat/screens/auth/introscreen.dart';
 import 'package:windchat/screens/homescreen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
         // if not logged in then go to LOGIN SCREEN
         log('Not Logged In : Moving to Login Screen');
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()));
+            MaterialPageRoute(builder: (context) => const IntroScreen()));
       }
     });
   }
