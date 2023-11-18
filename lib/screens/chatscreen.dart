@@ -355,88 +355,100 @@ class _ChatScreenState extends State<ChatScreen> {
                             .map((element) => Messages.fromJson(element.data()))
                             .toList();
 
-                        final receivedMessages = msglist
-                            .where((element) => element.toID == API.user.uid)
-                            .toList();
-                        logger.e(receivedMessages.first.msg);
+                        if (msglist.isNotEmpty) {
+                          final receivedMessages = msglist
+                              .where((element) => element.toID == API.user.uid)
+                              .toList();
 
-                        // Sentiment Analysis of Texts
-                        if (receivedMessages.isNotEmpty) {
-                          final reversedMessages =
-                              receivedMessages.reversed.toList();
+                          // Sentiment Analysis of Texts
+                          if (receivedMessages.isNotEmpty) {
+                            final reversedMessages =
+                                receivedMessages.reversed.toList();
 
-                          final lastMessage = EncryptDecrypt.decryptAES(
-                              reversedMessages.first.msg);
+                            final lastMessage = EncryptDecrypt.decryptAES(
+                                reversedMessages.first.msg);
 
-                          final sentimentresult =
-                              sentiment.analysis(lastMessage, emoji: true);
-                          final score = sentimentresult['score'];
-                          String reaction = "Neutral";
-                          String emoji = "😐";
+                            final sentimentresult =
+                                sentiment.analysis(lastMessage, emoji: true);
+                            final score = sentimentresult['score'];
+                            String reaction = "Neutral";
+                            String emoji = "😐";
 
-                          switch (score) {
-                            case -5:
-                              reaction = "  Abusing";
-                              emoji = "🤬";
-                              break;
-                            case -4:
-                              reaction = "  Angry";
-                              emoji = "😤";
-                              break;
-                            case -3:
-                              reaction = "  Very sad";
-                              emoji = "😭";
-                              break;
-                            case -2:
-                              reaction = "  Disappointed";
-                              emoji = "😞";
-                              break;
-                            case -1:
-                              reaction = "  Unhappy";
-                              emoji = "😞";
-                              break;
-                            case 0:
-                              reaction = "  Neutral";
-                              emoji = "😐";
-                              break;
-                            case 1:
-                              reaction = "  Happy";
-                              emoji = "😊";
-                              break;
-                            case 2:
-                              reaction = "  Cheerful";
-                              emoji = "😄";
-                              break;
-                            case 3:
-                              reaction = "  Loving";
-                              emoji = "😍";
-                              break;
-                            case 4:
-                              reaction = "  Extremely happy";
-                              emoji = "🥰";
-                              break;
-                            case 5:
-                              reaction = "  Ecstatic";
-                              emoji = "🎉";
-                              break;
-                            default:
-                              reaction = "  Neutral";
-                              emoji = "😐";
-                              break;
+                            switch (score) {
+                              case -5:
+                                reaction = "  Abusing";
+                                emoji = "🤬";
+                                break;
+                              case -4:
+                                reaction = "  Angry";
+                                emoji = "😤";
+                                break;
+                              case -3:
+                                reaction = "  Very sad";
+                                emoji = "😭";
+                                break;
+                              case -2:
+                                reaction = "  Disappointed";
+                                emoji = "😞";
+                                break;
+                              case -1:
+                                reaction = "  Unhappy";
+                                emoji = "😞";
+                                break;
+                              case 0:
+                                reaction = "  Neutral";
+                                emoji = "😐";
+                                break;
+                              case 1:
+                                reaction = "  Happy";
+                                emoji = "😊";
+                                break;
+                              case 2:
+                                reaction = "  Cheerful";
+                                emoji = "😄";
+                                break;
+                              case 3:
+                                reaction = "  Loving";
+                                emoji = "😍";
+                                break;
+                              case 4:
+                                reaction = "  Extremely happy";
+                                emoji = "🥰";
+                                break;
+                              case 5:
+                                reaction = "  Ecstatic";
+                                emoji = "🎉";
+                                break;
+                              default:
+                                reaction = "  Neutral";
+                                emoji = "😐";
+                                break;
+                            }
+
+                            return Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(children: [
+                                Text(emoji,
+                                    style: const TextStyle(fontSize: 25)),
+                                Text(
+                                  reaction,
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColorDark,
+                                      fontSize: 17),
+                                ),
+                              ]),
+                            );
+                          } else {
+                            return Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  " No message from ${widget.user.name} yet.",
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      color:
+                                          Theme.of(context).primaryColorDark),
+                                ));
                           }
-
-                          return Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(children: [
-                              Text(emoji, style: const TextStyle(fontSize: 25)),
-                              Text(
-                                reaction,
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColorDark,
-                                    fontSize: 17),
-                              ),
-                            ]),
-                          );
                         } else {
                           return Padding(
                               padding: const EdgeInsets.all(10.0),

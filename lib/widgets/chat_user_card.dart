@@ -48,7 +48,9 @@ class _ChatUserCardState extends State<ChatUserCard> {
                   [];
               if (lastmsg.isNotEmpty) {
                 _message = lastmsg[0];
-                content = EncryptDecrypt.decryptAES(_message!.msg);
+                if (_message!.type == 'text') {
+                  content = EncryptDecrypt.decryptAES(_message!.msg);
+                }
               }
 
               return ListTile(
