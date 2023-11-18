@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:dart_sentiment/dart_sentiment.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:windchat/api/encrypt_decrypt.dart';
 import 'package:windchat/helper/custom_chat_theme.dart';
 import 'package:windchat/helper/mydateutility.dart';
 import 'package:windchat/main.dart';
@@ -25,6 +27,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final _textController = TextEditingController();
   bool _showEmoji = false;
   bool _isImageUploading = false;
+  final sentiment = Sentiment();
+  Messages? lastMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +134,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: Column(
                 children: [
+                  Pref.isMoodEnabled ? _sentiment() : Container(),
                   _chatContent(),
                   if (_isImageUploading)
                     Align(
@@ -184,6 +189,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   final reversedMessages = msglist.reversed.toList();
 
                   if (msglist.isNotEmpty) {
+                    lastMessage = reversedMessages.first;
                     return ListView.builder(
                         reverse: true,
                         itemCount: reversedMessages.length,
@@ -321,6 +327,89 @@ class _ChatScreenState extends State<ChatScreen> {
               color: Colors.white,
             ),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget _sentiment() {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Card(
+              child: StreamBuilder(
+                  stream: API.getAllMessages(widget.user),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                      case ConnectionState.none:
+                        return const Center(
+                          child: LinearProgressIndicator(),
+                        );
+                      case ConnectionState.active:
+                      case ConnectionState.done:
+                        final data = snapshot.data?.docs;
+                        final msglist = data!
+                            .map((element) => Messages.fromJson(element.data()))
+                            .toList();
+
+                        final receivedMessages = msglist
+                            .where((element) => element.toID == API.user.uid)
+                            .toList();
+
+                        final reversedMessages =
+                            receivedMessages.reversed.toList();
+
+                        // Sentiment Analysis of Texts
+                        if (reversedMessages.isNotEmpty) {
+                          final sentimentresult = sentiment.analysis(
+                              EncryptDecrypt.decryptAES(
+                                  reversedMessages.first.msg),
+                              emoji: true);
+                          final score = sentimentresult['score'];
+                          String reaction = "Neutral";
+                          switch (score) {
+                            case -3:
+                              reaction = "😭  Very sad";
+                            case -2:
+                              reaction = "😞  Dissapointed";
+                            case -1:
+                              reaction = "😞  Unhappy";
+                            case 0:
+                              reaction = "😐  Neutral";
+                            case 1:
+                              reaction = "😊  Happy";
+                            case 2:
+                              reaction = "😄  Cheerful";
+                            case 3:
+                              reaction = "😍  Loving";
+                          }
+
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              reaction,
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontSize: 17),
+                            ),
+                          );
+                        } else {
+                          return Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                " No message from ${widget.user.name} yet.",
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    color: Theme.of(context).primaryColorDark),
+                              ));
+                        }
+                    }
+                  }),
+            ),
+          ),
         ],
       ),
     );

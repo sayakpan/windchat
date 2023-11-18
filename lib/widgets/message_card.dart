@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver_plus/gallery_saver.dart';
 import 'package:windchat/api/api.dart';
+import 'package:windchat/api/encrypt_decrypt.dart';
 import 'package:windchat/helper/custom_chat_theme.dart';
 import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
@@ -62,7 +63,7 @@ class _MessageCardState extends State<MessageCard> {
                       )),
                   child: widget.message.type == "text"
                       ? Text(
-                          widget.message.msg,
+                          EncryptDecrypt.decryptAES(widget.message.msg),
                           style: const TextStyle(
                               fontSize: 17, color: Colors.white),
                         )
@@ -153,7 +154,7 @@ class _MessageCardState extends State<MessageCard> {
                       )),
                   child: widget.message.type == "text"
                       ? Text(
-                          widget.message.msg,
+                          EncryptDecrypt.decryptAES(widget.message.msg),
                           style: const TextStyle(
                               fontSize: 17, color: Colors.black),
                         )

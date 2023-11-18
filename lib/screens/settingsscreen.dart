@@ -189,6 +189,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   ),
                 ),
+
+                // Mood Predictor
+                SettingsItem(
+                  onTap: () {},
+                  icons: Icons.mood_outlined,
+                  iconStyle: IconStyle(
+                    iconsColor: Colors.white,
+                    withBackground: true,
+                    backgroundColor: Colors.yellow.shade900,
+                  ),
+                  title: 'Mood Predictor',
+                  subtitle: "Predicts the mood based on texts",
+                  subtitleStyle:
+                      TextStyle(color: Theme.of(context).primaryColorDark),
+                  trailing: Switch(
+                    value: Pref.isMoodEnabled,
+                    onChanged: (value) async {
+                      setState(() {
+                        Pref.isMoodEnabled = !Pref.isMoodEnabled;
+                      });
+                      logger.e(Pref.isMoodEnabled);
+                    },
+                  ),
+                ),
               ],
             ),
 

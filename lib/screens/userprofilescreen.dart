@@ -66,7 +66,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         decoration: BoxDecoration(
                           border: Border.all(
                             strokeAlign: BorderSide.strokeAlignOutside,
-                            color: Colors.white,
+                            color: Theme.of(context).primaryColorLight,
                             width: 4.0,
                           ),
                           color: widget.user.isOnline

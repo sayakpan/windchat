@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:windchat/api/encrypt_decrypt.dart';
 import 'package:windchat/helper/mydateutility.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
@@ -21,6 +22,7 @@ class ChatUserCard extends StatefulWidget {
 class _ChatUserCardState extends State<ChatUserCard> {
   // To Store the last message - can be null
   Messages? _message;
+  late String content;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +48,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                   [];
               if (lastmsg.isNotEmpty) {
                 _message = lastmsg[0];
+                content = EncryptDecrypt.decryptAES(_message!.msg);
               }
 
               return ListTile(
@@ -98,9 +101,9 @@ class _ChatUserCardState extends State<ChatUserCard> {
                               ),
                             _message!.type == "text"
                                 ? Text(
-                                    _message!.msg.length > 17
-                                        ? '${_message!.msg.substring(0, 17)}...'
-                                        : _message!.msg,
+                                    content.length > 17
+                                        ? '${content.substring(0, 17)}...'
+                                        : content,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   )
