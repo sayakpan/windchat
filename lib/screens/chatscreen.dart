@@ -370,31 +370,70 @@ class _ChatScreenState extends State<ChatScreen> {
                               emoji: true);
                           final score = sentimentresult['score'];
                           String reaction = "Neutral";
+                          String emoji = "😐";
+
                           switch (score) {
+                            case -5:
+                              reaction = "  Abusing";
+                              emoji = "🤬";
+                              break;
+                            case -4:
+                              reaction = "  Angry";
+                              emoji = "😤";
+                              break;
                             case -3:
-                              reaction = "😭  Very sad";
+                              reaction = "  Very sad";
+                              emoji = "😭";
+                              break;
                             case -2:
-                              reaction = "😞  Dissapointed";
+                              reaction = "  Disappointed";
+                              emoji = "😞";
+                              break;
                             case -1:
-                              reaction = "😞  Unhappy";
+                              reaction = "  Unhappy";
+                              emoji = "😞";
+                              break;
                             case 0:
-                              reaction = "😐  Neutral";
+                              reaction = "  Neutral";
+                              emoji = "😐";
+                              break;
                             case 1:
-                              reaction = "😊  Happy";
+                              reaction = "  Happy";
+                              emoji = "😊";
+                              break;
                             case 2:
-                              reaction = "😄  Cheerful";
+                              reaction = "  Cheerful";
+                              emoji = "😄";
+                              break;
                             case 3:
-                              reaction = "😍  Loving";
+                              reaction = "  Loving";
+                              emoji = "😍";
+                              break;
+                            case 4:
+                              reaction = "  Extremely happy";
+                              emoji = "🥰";
+                              break;
+                            case 5:
+                              reaction = "  Ecstatic";
+                              emoji = "🎉";
+                              break;
+                            default:
+                              reaction = "  Neutral";
+                              emoji = "😐";
+                              break;
                           }
 
                           return Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Text(
-                              reaction,
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColorDark,
-                                  fontSize: 17),
-                            ),
+                            child: Row(children: [
+                              Text(emoji, style: const TextStyle(fontSize: 25)),
+                              Text(
+                                reaction,
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColorDark,
+                                    fontSize: 17),
+                              ),
+                            ]),
                           );
                         } else {
                           return Padding(
