@@ -129,8 +129,14 @@ class API {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
     // Encrypt the message before sending
-    final encryptedMsg = EncryptDecrypt.encryptAES(msg);
+    String encryptedMsg;
+    if(type=='text'){
+     encryptedMsg = EncryptDecrypt.encryptAES(msg);
+    }else{
+      encryptedMsg=msg;
+    }
 
+    
     final message = Messages(
         msg: encryptedMsg,
         toID: sendtoUser.id,

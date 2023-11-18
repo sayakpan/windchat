@@ -358,16 +358,18 @@ class _ChatScreenState extends State<ChatScreen> {
                         final receivedMessages = msglist
                             .where((element) => element.toID == API.user.uid)
                             .toList();
-
-                        final reversedMessages =
-                            receivedMessages.reversed.toList();
+                        logger.e(receivedMessages.first.msg);
 
                         // Sentiment Analysis of Texts
-                        if (reversedMessages.isNotEmpty) {
-                          final sentimentresult = sentiment.analysis(
-                              EncryptDecrypt.decryptAES(
-                                  reversedMessages.first.msg),
-                              emoji: true);
+                        if (receivedMessages.isNotEmpty) {
+                          final reversedMessages =
+                              receivedMessages.reversed.toList();
+
+                          final lastMessage = EncryptDecrypt.decryptAES(
+                              reversedMessages.first.msg);
+
+                          final sentimentresult =
+                              sentiment.analysis(lastMessage, emoji: true);
                           final score = sentimentresult['score'];
                           String reaction = "Neutral";
                           String emoji = "😐";

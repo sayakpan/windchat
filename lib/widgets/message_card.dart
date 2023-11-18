@@ -224,8 +224,9 @@ class _MessageCardState extends State<MessageCard> {
                           color: Colors.blue, size: 26),
                       name: 'Copy Text',
                       onTap: () async {
-                        await Clipboard.setData(
-                                ClipboardData(text: widget.message.msg))
+                        await Clipboard.setData(ClipboardData(
+                                text: EncryptDecrypt.decryptAES(
+                                    widget.message.msg)))
                             .then((value) {
                           //for hiding bottom sheet
                           Navigator.pop(context);
