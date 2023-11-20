@@ -357,7 +357,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
                         if (msglist.isNotEmpty) {
                           final receivedMessages = msglist
-                              .where((element) => element.toID == API.user.uid)
+                              .where((element) =>
+                                  element.toID == API.user.uid &&
+                                  element.type == 'text')
                               .toList();
 
                           // Sentiment Analysis of Texts
