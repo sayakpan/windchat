@@ -87,7 +87,7 @@ class CustomTheme {
     appBarTheme: const AppBarTheme(centerTitle: true),
     brightness: Brightness.dark,
     primaryColor: const Color(0xFF4B39EF),
-    primaryColorLight: const Color.fromARGB(255, 0, 0, 0),
+    primaryColorLight: const Color.fromARGB(255, 44, 44, 44),
     primaryColorDark:
         const Color.fromARGB(255, 255, 255, 255), //to be dybnamically changed
     textTheme: GoogleFonts.outfitTextTheme(), useMaterial3: true,

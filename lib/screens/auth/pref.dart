@@ -15,6 +15,9 @@ class Pref {
   static bool get isOnlineEnabled => _box.get('isOnlineEnabled') ?? true;
   static set isOnlineEnabled(bool value) => _box.put('isOnlineEnabled', value);
 
+  static bool get isMoodEnabled => _box.get('isMoodEnabled') ?? false;
+  static set isMoodEnabled(bool value) => _box.put('isMoodEnabled', value);
+
   static int get gradientIndex => _box.get('gradientIndex') ?? 0;
   static set gradientIndex(int value) => _box.put('gradientIndex', value);
 

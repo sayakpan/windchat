@@ -10,7 +10,7 @@ import 'package:windchat/helper/custom_chat_theme.dart';
 import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
-import 'package:windchat/screens/auth/loginscreen.dart';
+import 'package:windchat/screens/auth/introscreen.dart';
 import 'package:windchat/screens/auth/pref.dart';
 import 'package:windchat/screens/profilescreen.dart';
 
@@ -189,6 +189,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   ),
                 ),
+
+                // Mood Predictor
+                SettingsItem(
+                  onTap: () {},
+                  icons: Icons.mood_outlined,
+                  iconStyle: IconStyle(
+                    iconsColor: Colors.white,
+                    withBackground: true,
+                    backgroundColor: Colors.yellow.shade900,
+                  ),
+                  title: 'Mood Predictor',
+                  subtitle: "Predicts the mood based on texts",
+                  subtitleStyle:
+                      TextStyle(color: Theme.of(context).primaryColorDark),
+                  trailing: Switch(
+                    value: Pref.isMoodEnabled,
+                    onChanged: (value) async {
+                      setState(() {
+                        Pref.isMoodEnabled = !Pref.isMoodEnabled;
+                      });
+                      logger.e(Pref.isMoodEnabled);
+                    },
+                  ),
+                ),
               ],
             ),
 
@@ -231,7 +255,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const LoginScreen()));
+                                builder: (context) => const IntroScreen()));
                         logger.w('Successfully Signed Out');
                       });
                     });

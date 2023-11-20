@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -9,7 +8,7 @@ import 'package:windchat/api/api.dart';
 import 'package:windchat/helper/dialogs.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
-import 'package:windchat/screens/auth/loginscreen.dart';
+import 'package:windchat/screens/auth/introscreen.dart';
 import 'package:windchat/screens/settingsscreen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -97,18 +96,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: const Color.fromARGB(255, 225, 225, 225),
+                          color: const Color.fromARGB(255, 255, 255, 255),
                           width: 2.0,
                         ),
                         shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            offset: const Offset(2, 3),
-                          ),
-                        ],
                       ),
                       child: CircleAvatar(
                         radius: 100.0,
@@ -228,7 +219,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
+                        builder: (context) => const IntroScreen()));
                 log('Successfully Signed Out');
               });
             });

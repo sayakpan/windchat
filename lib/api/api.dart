@@ -3,6 +3,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:windchat/api/encrypt_decrypt.dart';
 import 'package:windchat/api/notification_api.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
@@ -100,14 +101,44 @@ class API {
         .snapshots();
   }
 
+  // // Function to Send a message
+  // static Future<void> sendMessage(
+  //     ChatUser sendtoUser, String msg, String type) async {
+  //   // Taking sending time as message document id in firebase
+  //   final time = DateTime.now().millisecondsSinceEpoch.toString();
+
+  //   final message = Messages(
+  //       msg: msg,
+  //       toID: sendtoUser.id,
+  //       read: '',
+  //       type: type,
+  //       sent: time,
+  //       fromID: user.uid);
+
+  //   final reference = firestore
+  //       .collection('chats/${getConversationID(sendtoUser.id)}/messages');
+
+  //   await reference.doc(time).set(message.toJson()).then((value) =>
+  //       {NotificationAPI.sendPushNotification(sendtoUser, msg, type)});
+  // }
+
   // Function to Send a message
   static Future<void> sendMessage(
       ChatUser sendtoUser, String msg, String type) async {
     // Taking sending time as message document id in firebase
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
+    // Encrypt the message before sending
+    String encryptedMsg;
+    if(type=='text'){
+     encryptedMsg = EncryptDecrypt.encryptAES(msg);
+    }else{
+      encryptedMsg=msg;
+    }
+
+    
     final message = Messages(
-        msg: msg,
+        msg: encryptedMsg,
         toID: sendtoUser.id,
         read: '',
         type: type,

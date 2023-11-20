@@ -5,11 +5,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:windchat/api/api.dart';
 import 'package:windchat/main.dart';
 import 'package:windchat/models/chat_user.dart';
+import 'package:windchat/screens/auth/introscreen.dart';
 import 'package:windchat/screens/homescreen.dart';
 import 'package:windchat/screens/profilescreen.dart';
 import 'package:windchat/screens/settingsscreen.dart';
 import '../helper/dialogs.dart';
-import '../screens/auth/loginscreen.dart';
 
 class SideDrawer extends StatefulWidget {
   final ChatUser user;
@@ -137,7 +137,7 @@ class _SideDrawerState extends State<SideDrawer> {
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const LoginScreen()));
+                          builder: (context) => const IntroScreen()));
                   log('Successfully Signed Out');
                 });
               });
